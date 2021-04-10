@@ -17,17 +17,51 @@ unsigned long int int_Register[16];
 // به همراه آدرسشون
 struct MAP_lable
 {
+	
 	char* lable;
 	int address;
+	
 };
+int search_on_Map_lable(struct MAP_lable* symbol_Table , int symbol_Table_size, char * lable)
+{
+	for (int i = 0; i < symbol_Table_size; i++)
+	{
+		if (symbol_Table[i].lable == lable)
+		{
+			return symbol_Table[i].address;
+		}
 
-
-symbol_Table = (struct MAP_lable*)malloc();
+	}
+	return -1;
+}
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
-void first_scan(FILE* filePointer)
+void first_scan(struct MAP_lable* symbol_Table ,
+	char ** instruction , int symbol_Table_Size ,int instruction_counter)
 {
+	for (int i = 0; i < instruction; i++)
+	{
+		if (instruction[i][0] != " ")
+		{
+			int j;
+			for ( j = 0; instruction[i][j] == " "; j++);
+			char newlable[10];
+			srtncpy(newlable, instruction[i], j);
+			if (search_on_Map_lable(symbol_Table, symbol_Table_Size, newlable)!==-1)
+			{
+				exit(1);
+			}
+			else 
+			{
+				symbol_Table[symbol_Table_Size].lable = newlable;
+				symbol_Table[symbol_Table_Size].address = i;
+				symbol_Table_Size++;
 
+			}
+			
+			
+		}
+	}
 }
 
 int main(int argc, char* argv[])
@@ -36,11 +70,19 @@ int main(int argc, char* argv[])
 	fopen_s(&Input, argv[1], "r");
 	FILE* Output;
 	fopen_s(&Output,argv[2], "w");
-	char* instruction[65537];
-	while (fgets(instruction, MAX_LINE_LENGTH, Input))
+	char* instruction[65537] = {0};
+	int instruction_counter = 0;
+	while (fgets(instruction[instruction_counter], MAX_LINE_LENGTH, Input))
 	{
-
+		instruction[instruction_counter][strlen(instruction_counter) - 1] = '\0';
+		instruction_counter++;
 	}
+
+	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
+	int symbol_Table_Size = 0;
+	
+	first_scan(Input, symbol_Table, instruction, symbol_Table_Size);
+
 
 	return 0;
 
