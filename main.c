@@ -36,18 +36,17 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table , int symbol_Table_size, 
 }
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
-void first_scan(struct MAP_lable* symbol_Table ,
-	char ** instruction , int symbol_Table_Size ,int instruction_counter)
+void first_scan(struct MAP_lable* symbol_Table , char ** instruction , int symbol_Table_Size ,int instruction_counter)
 {
-	for (int i = 0; i < instruction; i++)
+	for (int i = 0; i < instruction_counter; i++)
 	{
 		if (instruction[i][0] != " ")
 		{
 			int j;
 			for ( j = 0; instruction[i][j] == " "; j++);
-			char newlable[10];
+			char newlable[10] = { 0 };
 			srtncpy(newlable, instruction[i], j);
-			if (search_on_Map_lable(symbol_Table, symbol_Table_Size, newlable)!==-1)
+			if (search_on_Map_lable(symbol_Table, symbol_Table_Size, newlable)!=(-1))
 			{
 				exit(1);
 			}
@@ -62,6 +61,7 @@ void first_scan(struct MAP_lable* symbol_Table ,
 			
 		}
 	}
+	return;
 }
 
 int main(int argc, char* argv[])
