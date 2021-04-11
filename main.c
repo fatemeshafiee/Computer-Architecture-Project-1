@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_LINE_LENGTH 100
 
@@ -66,13 +67,13 @@ void first_scan(struct MAP_lable* symbol_Table , char ** instruction ,
 	}
 	return;
 }
+
 void What_kind(char ** instruction, int instruction_counter)
 {
 	for (int i = 0; i < instruction_counter; i++)
 	{
 		int j;
-		char instruct [5];
-		int instruct_size = 0;
+		char instruct []="";
 		for (j = 0; instruction[i][j] != " "; j++); // اگر لیبلی وجود داره، ردش میکنیم
 		while (instruction[i][j] == " ")	
 		{
@@ -81,11 +82,29 @@ void What_kind(char ** instruction, int instruction_counter)
 		}
 		while (instruction[i][j] != " ")
 		{
-			instruct[instruct_size] = instruction[i][j];
-			instruct_size++;
+			strcat(instruct, instruction[i][j]);
+			
 			j++;
 		} 
 		//  اینجا، اون قسمت اینستراکشن رو توی اینستراکت ریختیم
+		// is it true?!
+		if (strcmp(instruct, "add") || strcmp(instruct, "sub") ||
+			strcmp(instruct, "slt") || strcmp(instruct, "or")  ||
+			strcmp(instruct, "nand"))
+		{
+
+		}
+		else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
+			     strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
+			     strcmp(instruct, "lw")   || strcmp(instruct, "sw")  ||
+			     strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
+		{
+
+		}
+		else
+		{
+
+		}
 
 	}
 }
