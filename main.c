@@ -8,7 +8,9 @@
 // رجیسترها سی و دو بیتی هستند
 //فعلا نمیدونم بهتره استرینگ باشن یا اینت باشن پس از هردو تعریفشون میکنم.
 
-char* char_Register[16];
+// char* char_Register[16]; 
+//فکر میکنم این نوع نوشتن درست نیست چون ما برای هر رجیستر 32 بیت میخوایم
+
 unsigned long int int_Register[16];
 
 //یک سری برچسب داریم که باید سری اول، تشخیص بدیمشون
@@ -36,14 +38,15 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table , int symbol_Table_size, 
 }
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
-void first_scan(struct MAP_lable* symbol_Table , char ** instruction , int symbol_Table_Size ,int instruction_counter)
+void first_scan(struct MAP_lable* symbol_Table , char ** instruction , 
+	int symbol_Table_Size ,int instruction_counter)
 {
 	for (int i = 0; i < instruction_counter; i++)
 	{
 		if (instruction[i][0] != " ")
 		{
 			int j;
-			for ( j = 0; instruction[i][j] == " "; j++);
+			for ( j = 0; instruction[i][j] != " "; j++);
 			char newlable[10] = { 0 };
 			srtncpy(newlable, instruction[i], j);
 			if (search_on_Map_lable(symbol_Table, symbol_Table_Size, newlable)!=(-1))
@@ -62,6 +65,29 @@ void first_scan(struct MAP_lable* symbol_Table , char ** instruction , int symbo
 		}
 	}
 	return;
+}
+void What_kind(char ** instruction, int instruction_counter)
+{
+	for (int i = 0; i < instruction_counter; i++)
+	{
+		int j;
+		char instruct [5];
+		int instruct_size = 0;
+		for (j = 0; instruction[i][j] != " "; j++); // اگر لیبلی وجود داره، ردش میکنیم
+		while (instruction[i][j] == " ")	
+		{
+			//  تا رسیدن به اولین اینستراکشن، اسپیس ها رو هم رد میکنیم
+			j++;
+		}
+		while (instruction[i][j] != " ")
+		{
+			instruct[instruct_size] = instruction[i][j];
+			instruct_size++;
+			j++;
+		} 
+		//  اینجا، اون قسمت اینستراکشن رو توی اینستراکت ریختیم
+
+	}
 }
 
 int main(int argc, char* argv[])
