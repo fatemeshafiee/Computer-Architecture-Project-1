@@ -1,6 +1,7 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define MAX_LINE_LENGTH 100
 
@@ -68,6 +69,132 @@ void first_scan(struct MAP_lable* symbol_Table , char ** instruction ,
 	return;
 }
 
+//function to transfer binary to int
+char * Decimal_To_Binary(int n)
+{
+	char binary[] = " ", rest;
+	int cnt = 0;
+	while (n > 0)
+	{
+		rest = n % 2;
+		strcat(binary, rest);
+		n /= 2;
+		cnt++;
+	}
+	while (cnt < 4)
+	{
+		strcat(binary, '0');
+		cnt++;
+	}
+	return strrev(binary);
+}
+//فعلا برای R_Type
+char* connector_R(char* op_code, char* rs, char* rt, char* rd)
+{
+	char total[] = "";
+	int i, j = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		total[i] = op_code[i];
+	}
+	for (i = 4; i < 8; i++)
+	{
+		total[i] = rs[j];
+	}
+	j = 0;
+	for (i = 8; i < 12; i++)
+	{
+		total[i] = rt[j];
+		j++;
+	}
+	j = 0;
+	for (i = 12; i < 16; i++)
+	{
+		total[i] = rd[j];
+	}
+	return total;
+}
+
+unsigned long int Binary_To_Decimal(char* number, int size)
+{
+	unsigned long int n = 0, two = 0;
+	for (int i = size -1; i >= 0; i--)
+	{
+		n += (pow(2, two) * number[i]);
+		two++;
+	}
+	return n;
+}
+
+//seprate rd, rs, rt
+// for R_Type (for now)
+unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code)
+{
+	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
+	strcat(instruction[i], " ");
+	while (instruction[i][j] != " " || instruction[i][j] != '#')
+	{
+		if (instruction[i][j] == ',')
+		{
+			tenth = 1;
+			tdd++;
+		}
+		else if (tdd == 0)
+		{
+			rd += (tenth * (instruction[i][j] - '0'));
+		}
+		else if (tdd == 1)
+		{
+			rs += (tenth * (instruction[i][j] - '0'));
+		}
+		else
+		{
+			rt += (tenth * (instruction[i][j] - '0'));
+		}
+		tenth *= 10;
+		j++;
+	}
+	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs),
+		Decimal_To_Binary(rt), Decimal_To_Binary(rd)), 16);
+}
+
+unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
+{
+	// instruction $rd, $rs, $rt
+	// in machin code : 0000 op-code rs rt rd
+	while (instruction[i][j] == " ")
+		j++;
+	unsigned long int final_result;
+	if (strcmp(instruct, "add"))
+	{
+		final_result = seprator_R(instruction, j, i, '0000');
+	}
+	else if (strcmp(instruct, "sub"))
+	{
+		final_result = seprator_R(instruction, j, i, '0001');
+	}
+	else if (strcmp(instruct, "slt"))
+	{
+		final_result = seprator_R(instruction, j, i, '0010');
+	}
+	else if (strcmp(instruct, "or"))
+	{
+		final_result = seprator_R(instruction, j, i, '0011');
+	}
+	else if (strcmp(instruct, "nand"))
+	{
+		final_result = seprator_R(instruction, j, i, '0100');
+	}
+	return (final_result * pow(2, 12));
+}
+
+unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
+{
+	// instruction $rt, $rs, imm
+	// machin code : 0000 op_code rs, rt, offset
+
+}
+
 void What_kind(char ** instruction, int instruction_counter)
 {
 	for (int i = 0; i < instruction_counter; i++)
@@ -87,7 +214,9 @@ void What_kind(char ** instruction, int instruction_counter)
 			j++;
 		} 
 		//  اینجا، اون قسمت اینستراکشن رو توی اینستراکت ریختیم
-		// is it true?!
+		// is it true?! //what do you mean?
+		// J is now whatever after the instruction. $rd, $rs, %rt
+		// so we're gonna send j to the function to use it
 		if (strcmp(instruct, "add") || strcmp(instruct, "sub") ||
 			strcmp(instruct, "slt") || strcmp(instruct, "or")  ||
 			strcmp(instruct, "nand"))
@@ -99,7 +228,7 @@ void What_kind(char ** instruction, int instruction_counter)
 			     strcmp(instruct, "lw")   || strcmp(instruct, "sw")  ||
 			     strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 		{
-
+			 
 		}
 		else
 		{
@@ -108,6 +237,7 @@ void What_kind(char ** instruction, int instruction_counter)
 
 	}
 }
+
 
 int main(int argc, char* argv[])
 {
