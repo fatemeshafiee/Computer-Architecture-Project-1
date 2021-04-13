@@ -71,7 +71,7 @@ void first_scan(struct MAP_lable* symbol_Table , char ** instruction ,
 }
 
 //function to transfer binary to int
-char * Decimal_To_Binary(int n)
+char * Decimal_To_Binary(int n, int size)
 {
 	char binary[] = " ", rest;
 	int cnt = 0;
@@ -82,7 +82,7 @@ char * Decimal_To_Binary(int n)
 		n /= 2;
 		cnt++;
 	}
-	while (cnt < 4)
+	while (cnt < size)
 	{
 		strcat(binary, "0");
 		cnt++;
@@ -109,6 +109,22 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 
 	return strrev(total);
 }
+char* connector_I(char* op_code, char* rs, char* rt, char* imm)
+{
+	char total[] = "";
+	int i, j = 0;
+	for (i = 31; i > 27; i--)
+	{
+		strcat(total, '0');
+	}
+	strcat(total, op_code);
+	strcat(total, rs);
+	strcat(total, rt);
+	strcat(total, imm);
+
+
+	return strrev(total);
+}
 
 unsigned long int Binary_To_Decimal(char* number, int size)
 {
@@ -127,7 +143,7 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 {
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
 	strcat(instruction[i], " ");
-	while (instruction[i][j] != " " || instruction[i][j] != '#')
+	while (instruction[i][j] != " " && instruction[i][j] != '#')
 	{
 		if (instruction[i][j] == ',')
 		{
@@ -135,16 +151,19 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 			tdd++;
 		}
 		else if (tdd == 0)
-		{
-			rd += (tenth * (instruction[i][j] - '0'));
+		{	
+			rd = rd * tenth;
+			rd +=  (instruction[i][j] - '0');
 		}
 		else if (tdd == 1)
 		{
-			rs += (tenth * (instruction[i][j] - '0'));
+			rs = rs * tenth;
+			rs += (instruction[i][j] - '0');
 		}
 		else
 		{
-			rt += (tenth * (instruction[i][j] - '0'));
+			rt = rt * tenth;
+			rt += (instruction[i][j] - '0');
 		}
 		tenth *= 10;
 		j++;
@@ -169,10 +188,10 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 	}
 	else if (strcmp(instruct, "nand"))
 	{
-		val_Register[rd] = ~(val_Register[rs] & val_Register[rt]);
+		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
-	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs),
-	Decimal_To_Binary(rt), Decimal_To_Binary(rd)), 32);
+	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs,4),
+	Decimal_To_Binary(rt,4), Decimal_To_Binary(rd,4)), 32);
 }
 
 unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
@@ -186,33 +205,173 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 	unsigned long int final_result;
 	if (strcmp(instruct, "add"))
 	{
-		final_result = seprator_R(instruction, j, i, "0000");
+		final_result = seprator_R(instruction, j, i, "0000", instruct);
 	}
 	else if (strcmp(instruct, "sub"))
 	{
-		final_result = seprator_R(instruction, j, i, "0001");
+		final_result = seprator_R(instruction, j, i, "0001", instruct);
 	}
 	else if (strcmp(instruct, "slt"))
 	{
-		final_result = seprator_R(instruction, j, i, "0010");
+		final_result = seprator_R(instruction, j, i, "0010", instruct);
 	}
 	else if (strcmp(instruct, "or"))
 	{
-		final_result = seprator_R(instruction, j, i, "0011");
+		final_result = seprator_R(instruction, j, i, "0011", instruct);
 	}
 	else if (strcmp(instruct, "nand"))
 	{
-		final_result = seprator_R(instruction, j, i, "0100");
+		final_result = seprator_R(instruction, j, i, "0100", instruct);
 	}
 	return final_result;
 }
+unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, char* instruct,
+	                         struct MAP_lable* symbol_Table, int symbol_Table_size )
+{
+	strcat(instruction[i], " ");
 
+	int rs = 0, rt = 0, INT_imm=0, tenth = 1, tdd = 0;
+
+	char imm[] ="";
+	strcat(instruction[i], " ");
+	if (instruct == "lui")
+	{
+		while (instruction[i][j] != " " && instruction[i][j] != '#')
+		{
+
+			if (instruction[i][j] == ',')
+			{
+				tenth = 1;
+				tdd++;
+			}
+			else if (tdd == 0)
+			{
+				rt = rt * tenth;
+				rt += (instruction[i][j] - '0');
+			}
+			else
+			{
+				strcat(imm, instruction[i][j]);
+			}
+			tenth *= 10;
+			j++;
+		}
+		if (imm[0] >= '0' && imm[0] <= '9')
+		{
+			tenth = 1;
+			
+			for (int k = 0; k < strlen(imm); k++)
+			{
+				INT_imm = INT_imm * tenth;
+
+				INT_imm += (imm[k] - '0') ;
+				tenth *= 10;
+			}
+		}
+		else
+		{
+			INT_imm = search_on_Map_lable(symbol_Table, symbol_Table_size, imm);
+			if (INT_imm == -1)
+			{
+				exit(1);
+			}
+		}
+
+
+	}
+	
+	else
+	{
+		while (instruction[i][j] != " " && instruction[i][j] != '#')
+		{
+
+			if (instruction[i][j] == ',')
+			{
+				tenth = 1;
+				tdd++;
+			}
+			else if (tdd == 0)
+			{
+				rt = rt * tenth;
+				rt +=  (instruction[i][j] - '0');
+			}
+			else if (tdd == 1)
+			{
+				rs = rs * tenth;
+				rs +=  (instruction[i][j] - '0');
+			}
+			else
+			{
+				strcat(imm, instruction[i][j]);
+			}
+			tenth *= 10;
+			j++;
+		}
+		if (imm[0] >= '0' && imm[0] <= '9')
+		{
+			tenth = 1;
+
+			for (int k = 0; k < strlen(imm); k++)
+			{
+				INT_imm = INT_imm * tenth;
+
+				INT_imm += (imm[k] - '0');
+				tenth *= 10;
+
+			
+			}
+		}
+		else
+		{
+			INT_imm = search_on_Map_lable(symbol_Table,symbol_Table_size,imm);
+			if (INT_imm == -1)
+			{
+				exit(1);
+			}
+		}
+	
+
+	}
+
+	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(imm,15)),32);
+	 
+}
 unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
 {
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
 	while (instruction[i][j] == " ")
 		j++;
+	unsigned long int final_result;
+	if (strcmp(instruct, "addi"))
+	{
+		final_result = seprator_R(instruction, j, i, "0101", instruct);
+	}
+	else if (strcmp(instruct, "slti"))
+	{
+		final_result = seprator_R(instruction, j, i, "0110", instruct);
+	}
+	else if (strcmp(instruct, "ori"))
+	{
+		final_result = seprator_R(instruction, j, i, "0111", instruct);
+	}
+	else if (strcmp(instruct, "lui"))
+	{
+		final_result = seprator_R(instruction, j, i, "1000", instruct);
+	}
+	else if (strcmp(instruct, "lw"))
+	{
+		final_result = seprator_R(instruction, j, i, "1001", instruct);
+	}
+	else if (strcmp(instruct, "sw"))
+	{
+		final_result = seprator_R(instruction, j, i, "1010", instruct);
+	}
+	else if (strcmp(instruct, "beq"))
+	{
+		final_result = seprator_R(instruction, j, i, "1011", instruct);
+	}
+	return final_result;
 
 
 
@@ -251,7 +410,7 @@ void What_kind(char ** instruction, int instruction_counter)
 			     strcmp(instruct, "lw")   || strcmp(instruct, "sw")  ||
 			     strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 		{
-			 
+			I_Type(instruct, instruction, j, i);
 		}
 		else
 		{
