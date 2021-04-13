@@ -13,7 +13,8 @@
 // char* char_Register[16]; 
 //فکر میکنم این نوع نوشتن درست نیست چون ما برای هر رجیستر 32 بیت میخوایم
 
-unsigned long int int_Register[16];
+unsigned long int val_Register[16];
+
 
 //یک سری برچسب داریم که باید سری اول، تشخیص بدیمشون
 // بعد بریزیمشون تو
@@ -83,7 +84,7 @@ char * Decimal_To_Binary(int n)
 	}
 	while (cnt < 4)
 	{
-		strcat(binary, '0');
+		strcat(binary, "0");
 		cnt++;
 	}
 	return strrev(binary);
@@ -103,7 +104,7 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 	strcat(total, rd);
 	for (i = 1; i >= 0; i--)
 	{
-		strcat(total, '0');
+		strcat(total, "0");
 	}
 
 	return strrev(total);
@@ -164,23 +165,23 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 	unsigned long int final_result;
 	if (strcmp(instruct, "add"))
 	{
-		final_result = seprator_R(instruction, j, i, '0000');
+		final_result = seprator_R(instruction, j, i, "0000");
 	}
 	else if (strcmp(instruct, "sub"))
 	{
-		final_result = seprator_R(instruction, j, i, '0001');
+		final_result = seprator_R(instruction, j, i, "0001");
 	}
 	else if (strcmp(instruct, "slt"))
 	{
-		final_result = seprator_R(instruction, j, i, '0010');
+		final_result = seprator_R(instruction, j, i, "0010");
 	}
 	else if (strcmp(instruct, "or"))
 	{
-		final_result = seprator_R(instruction, j, i, '0011');
+		final_result = seprator_R(instruction, j, i, "0011");
 	}
 	else if (strcmp(instruct, "nand"))
 	{
-		final_result = seprator_R(instruction, j, i, '0100');
+		final_result = seprator_R(instruction, j, i, "0100");
 	}
 	return final_result;
 }
@@ -218,7 +219,7 @@ void What_kind(char ** instruction, int instruction_counter)
 			strcmp(instruct, "slt") || strcmp(instruct, "or")  ||
 			strcmp(instruct, "nand"))
 		{
-
+			R_Type(instruct, instruction,  j,  i);
 		}
 		else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
 			     strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
