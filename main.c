@@ -93,26 +93,20 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 {
 	char total[] = "";
 	int i, j = 0;
-	for (int i = 0; i < 4; i++)
+	for (i = 31; i > 27; i--)
 	{
-		total[i] = op_code[i];
+		strcat(total, '0');
 	}
-	for (i = 4; i < 8; i++)
+	strcat(total, op_code);
+	strcat(total, rs);
+	strcat(total, rt);
+	strcat(total, rd);
+	for (i = 1; i >= 0; i--)
 	{
-		total[i] = rs[j];
+		strcat(total, '0');
 	}
-	j = 0;
-	for (i = 8; i < 12; i++)
-	{
-		total[i] = rt[j];
-		j++;
-	}
-	j = 0;
-	for (i = 12; i < 16; i++)
-	{
-		total[i] = rd[j];
-	}
-	return total;
+
+	return strrev(total);
 }
 
 unsigned long int Binary_To_Decimal(char* number, int size)
@@ -120,7 +114,7 @@ unsigned long int Binary_To_Decimal(char* number, int size)
 	unsigned long int n = 0, two = 0;
 	for (int i = size -1; i >= 0; i--)
 	{
-		n += (pow(2, two) * number[i]);
+		n += (pow(2, two) * (number[i]-'0'));
 		two++;
 	}
 	return n;
@@ -154,15 +148,18 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code)
 		tenth *= 10;
 		j++;
 	}
+	// hint : we should update register rd!
 	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs),
-		Decimal_To_Binary(rt), Decimal_To_Binary(rd)), 16);
+	Decimal_To_Binary(rt), Decimal_To_Binary(rd)), 32);
 }
 
 unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 {
 	// instruction $rd, $rs, $rt
 	// in machin code : 0000 op-code rs rt rd
+	// j is a index of first space after instruct
 	while (instruction[i][j] == " ")
+
 		j++;
 	unsigned long int final_result;
 	if (strcmp(instruct, "add"))
@@ -185,7 +182,7 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 	{
 		final_result = seprator_R(instruction, j, i, '0100');
 	}
-	return (final_result * pow(2, 12));
+	return final_result;
 }
 
 unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
