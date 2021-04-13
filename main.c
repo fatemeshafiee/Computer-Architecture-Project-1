@@ -123,7 +123,7 @@ unsigned long int Binary_To_Decimal(char* number, int size)
 
 //seprate rd, rs, rt
 // for R_Type (for now)
-unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code)
+unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, char * instruct)
 {
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
 	strcat(instruction[i], " ");
@@ -149,7 +149,28 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code)
 		tenth *= 10;
 		j++;
 	}
+	
 	// hint : we should update register rd!
+	if (strcmp(instruct, "add"))
+	{
+		val_Register[rd] = val_Register[rs] + val_Register[rt];
+	}
+	else if (strcmp(instruct, "sub"))
+	{
+		val_Register[rd] = val_Register[rs] - val_Register[rt];
+	}
+	else if (strcmp(instruct, "slt"))
+	{
+		val_Register[rd] = val_Register[rs] < val_Register[rt]; 
+	}
+	else if (strcmp(instruct, "or"))
+	{
+		val_Register[rd] = val_Register[rs] | val_Register[rt];
+	}
+	else if (strcmp(instruct, "nand"))
+	{
+		val_Register[rd] = ~(val_Register[rs] & val_Register[rt]);
+	}
 	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs),
 	Decimal_To_Binary(rt), Decimal_To_Binary(rd)), 32);
 }
@@ -160,8 +181,8 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 	// in machin code : 0000 op-code rs rt rd
 	// j is a index of first space after instruct
 	while (instruction[i][j] == " ")
-
 		j++;
+
 	unsigned long int final_result;
 	if (strcmp(instruct, "add"))
 	{
@@ -190,6 +211,10 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
 {
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
+	while (instruction[i][j] == " ")
+		j++;
+
+
 
 }
 
