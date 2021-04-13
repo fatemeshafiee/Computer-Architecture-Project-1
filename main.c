@@ -336,7 +336,8 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(imm,15)),32);
 	 
 }
-unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
+unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
+	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
@@ -345,31 +346,31 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
 	unsigned long int final_result;
 	if (strcmp(instruct, "addi"))
 	{
-		final_result = seprator_R(instruction, j, i, "0101", instruct);
+		final_result = seprator_I(instruction, j, i, "0101", instruct,symbol_Table,symbol_Table_size);
 	}
 	else if (strcmp(instruct, "slti"))
 	{
-		final_result = seprator_R(instruction, j, i, "0110", instruct);
+		final_result = seprator_I(instruction, j, i, "0110", instruct,symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "ori"))
 	{
-		final_result = seprator_R(instruction, j, i, "0111", instruct);
+		final_result = seprator_I(instruction, j, i, "0111", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "lui"))
 	{
-		final_result = seprator_R(instruction, j, i, "1000", instruct);
+		final_result = seprator_I(instruction, j, i, "1000", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "lw"))
 	{
-		final_result = seprator_R(instruction, j, i, "1001", instruct);
+		final_result = seprator_I(instruction, j, i, "1001", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "sw"))
 	{
-		final_result = seprator_R(instruction, j, i, "1010", instruct);
+		final_result = seprator_I(instruction, j, i, "1010", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "beq"))
 	{
-		final_result = seprator_R(instruction, j, i, "1011", instruct);
+		final_result = seprator_I(instruction, j, i, "1011", instruct, symbol_Table, symbol_Table_size);
 	}
 	return final_result;
 
@@ -377,7 +378,8 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i)
 
 }
 
-void What_kind(char ** instruction, int instruction_counter)
+void What_kind(char ** instruction, int instruction_counter,
+	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	for (int i = 0; i < instruction_counter; i++)
 	{
@@ -410,7 +412,7 @@ void What_kind(char ** instruction, int instruction_counter)
 			     strcmp(instruct, "lw")   || strcmp(instruct, "sw")  ||
 			     strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 		{
-			I_Type(instruct, instruction, j, i);
+			I_Type(instruct, instruction, j, i,symbol_Table,symbol_Table_size);
 		}
 		else
 		{
