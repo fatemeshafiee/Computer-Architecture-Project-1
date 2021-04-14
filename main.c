@@ -89,6 +89,17 @@ char * Decimal_To_Binary(int n, int size)
 	}
 	return strrev(binary);
 }
+unsigned long int Binary_To_Decimal(char* number, int size)
+{
+	unsigned long int n = 0, two = 0;
+	for (int i = size - 1; i >= 0; i--)
+	{
+		n += (pow(2, two) * (number[i] - '0'));
+		two++;
+	}
+	return n;
+}
+
 //فعلا برای R_Type
 char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 {
@@ -109,37 +120,7 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 
 	return strrev(total);
 }
-char* connector_I(char* op_code, char* rs, char* rt, char* imm)
-{
-	char total[] = "";
-	int i, j = 0;
-	for (i = 31; i > 27; i--)
-	{
-		strcat(total, '0');
-	}
-	strcat(total, op_code);
-	strcat(total, rs);
-	strcat(total, rt);
-	strcat(total, imm);
-
-
-	return strrev(total);
-}
-
-unsigned long int Binary_To_Decimal(char* number, int size)
-{
-	unsigned long int n = 0, two = 0;
-	for (int i = size -1; i >= 0; i--)
-	{
-		n += (pow(2, two) * (number[i]-'0'));
-		two++;
-	}
-	return n;
-}
-
-//seprate rd, rs, rt
-// for R_Type (for now)
-unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, char * instruct)
+unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, char* instruct)
 {
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
 	strcat(instruction[i], " ");
@@ -151,9 +132,9 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 			tdd++;
 		}
 		else if (tdd == 0)
-		{	
+		{
 			rd = rd * tenth;
-			rd +=  (instruction[i][j] - '0');
+			rd += (instruction[i][j] - '0');
 		}
 		else if (tdd == 1)
 		{
@@ -168,7 +149,7 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 		tenth *= 10;
 		j++;
 	}
-	
+
 	// hint : we should update register rd!
 	if (strcmp(instruct, "add"))
 	{
@@ -180,7 +161,7 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 	}
 	else if (strcmp(instruct, "slt"))
 	{
-		val_Register[rd] = val_Register[rs] < val_Register[rt]; 
+		val_Register[rd] = val_Register[rs] < val_Register[rt];
 	}
 	else if (strcmp(instruct, "or"))
 	{
@@ -190,8 +171,8 @@ unsigned long int seprator_R(char ** instruction, int j, int i, char* op_code, c
 	{
 		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
-	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs,4),
-	Decimal_To_Binary(rt,4), Decimal_To_Binary(rd,4)), 32);
+	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs, 4),
+		Decimal_To_Binary(rt, 4), Decimal_To_Binary(rd, 4)), 32);
 }
 
 unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
@@ -225,6 +206,25 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 	}
 	return final_result;
 }
+
+//  I type
+char* connector_I(char* op_code, char* rs, char* rt, char* imm)
+{
+	char total[] = "";
+	int i, j = 0;
+	for (i = 31; i > 27; i--)
+	{
+		strcat(total, '0');
+	}
+	strcat(total, op_code);
+	strcat(total, rs);
+	strcat(total, rt);
+	strcat(total, imm);
+
+
+	return strrev(total);
+}
+
 unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, char* instruct,
 	                         struct MAP_lable* symbol_Table, int symbol_Table_size )
 {
@@ -333,11 +333,43 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 
 	}
 
+	// the value of rt
+
+
+	if (strcmp(instruct, "addi"))
+	{
+		
+	}
+	else if (strcmp(instruct, "slti"))
+	{
+		
+	}
+	else if (strcmp(instruct, "ori"))
+	{
+		
+	}
+	else if (strcmp(instruct, "lui"))
+	{
+		
+	}
+	else if (strcmp(instruct, "lw"))
+	{
+		
+	}
+	else if (strcmp(instruct, "sw"))
+	{
+		
+	}
+	else if (strcmp(instruct, "beq"))
+	{
+		
+	}
+
 	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(imm,15)),32);
 	 
 }
 unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
-	struct MAP_lable* symbol_Table, int symbol_Table_size)
+	                     struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
