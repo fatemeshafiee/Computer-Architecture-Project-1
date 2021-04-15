@@ -87,8 +87,13 @@ char * Decimal_To_Binary(int n, int size)
 		strcat(binary, "0");
 		cnt++;
 	}
+	if (size == 16 && strlen(binary) > 16)
+	{
+		exit(1);
+	}
 	return strrev(binary);
 }
+
 unsigned long int Binary_To_Decimal(char* number, int size)
 {
 	unsigned long int n = 0, two = 0;
@@ -113,12 +118,12 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 	strcat(total, rs);
 	strcat(total, rt);
 	strcat(total, rd);
-	for (i = 1; i >= 0; i--)
+	for (i = 11; i >= 0; i--)
 	{
 		strcat(total, "0");
 	}
 
-	return strrev(total);
+	return total;
 }
 unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, char* instruct)
 {
@@ -171,6 +176,7 @@ unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, ch
 	{
 		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
+
 	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs, 4),
 		Decimal_To_Binary(rt, 4), Decimal_To_Binary(rd, 4)), 32);
 }
@@ -222,7 +228,7 @@ char* connector_I(char* op_code, char* rs, char* rt, char* imm)
 	strcat(total, imm);
 
 
-	return strrev(total);
+	return total;
 }
 
 unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, char* instruct,
@@ -276,10 +282,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 				exit(1);
 			}
 		}
-
-
 	}
-	
 	else
 	{
 		while (instruction[i][j] != " " && instruction[i][j] != '#')
@@ -316,9 +319,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 				INT_imm = INT_imm * tenth;
 
 				INT_imm += (imm[k] - '0');
-				tenth *= 10;
-
-			
+				tenth *= 10;			
 			}
 		}
 		else
@@ -329,45 +330,11 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 				exit(1);
 			}
 		}
-	
-
 	}
 
-	// the value of rt
-
-
-	if (strcmp(instruct, "addi"))
-	{
-		
-	}
-	else if (strcmp(instruct, "slti"))
-	{
-		
-	}
-	else if (strcmp(instruct, "ori"))
-	{
-		
-	}
-	else if (strcmp(instruct, "lui"))
-	{
-		
-	}
-	else if (strcmp(instruct, "lw"))
-	{
-		
-	}
-	else if (strcmp(instruct, "sw"))
-	{
-		
-	}
-	else if (strcmp(instruct, "beq"))
-	{
-		
-	}
-
-	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(imm,15)),32);
-	 
+	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(INT_imm,15)),32);	 
 }
+
 unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
 	                     struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
@@ -404,10 +371,71 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
 	{
 		final_result = seprator_I(instruction, j, i, "1011", instruct, symbol_Table, symbol_Table_size);
 	}
+
 	return final_result;
+}
 
+char* connector_J(char* op_code, char* offset)
+{
+	char total[] = "";
+	int i, j = 0;
+	for (i = 31; i > 27; i--)
+	{
+		strcat(total, '0');
+	}
+	strcat(total, op_code);
+	strcat(total, "00000000");
+	strcat(total, offset);
+	return total;
+}
 
+unsigned long int seprator_J(char** instruction, int j, int i,
+	struct MAP_lable* symbol_Table, int symbol_Table_size)
+{
+	char offset[] = "";
+	strcat(instruction[i], " ");
+	while (instruction[i][j] != " " || instruction[i][j] != '#')
+	{
+		strcat(offset, instruction[i][j]);
+		j++;
+	}
+	int index = 0, INT_offset = 0, tenth = 1;
+	if (offset[index] >= 0 && offset[index] <= 9)
+	{
+		for (int k = 0; k < strlen(offset); k++)
+		{
+			INT_offset = INT_offset * tenth;
 
+			INT_offset += (offset[k] - '0');
+			tenth *= 10;
+		}
+	}
+	else
+	{
+		INT_offset = search_on_Map_lable(symbol_Table, symbol_Table_size, offset);
+		if (INT_offset == -1)
+		{
+			exit(1);
+		}
+	}
+	return Binary_To_Decimal(connector_J("1101", Decimal_To_Binary(INT_offset, 16)), 32);
+}
+
+unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
+						struct MAP_lable* symbol_Table, int symbol_Table_size)
+{
+	//هالت هیچی نداره، جی هم یکی  داره.
+	if (instruct == "halt")
+	{
+		return 234881024;
+	}
+	else
+	{
+		while (instruction[i][j] == " ")
+			j++;
+		unsigned long int final_result;
+
+	}
 }
 
 void What_kind(char ** instruction, int instruction_counter,
@@ -434,23 +462,25 @@ void What_kind(char ** instruction, int instruction_counter,
 		// J is now whatever after the instruction. $rd, $rs, %rt
 		// so we're gonna send j to the function to use it
 		if (strcmp(instruct, "add") || strcmp(instruct, "sub") ||
-			strcmp(instruct, "slt") || strcmp(instruct, "or")  ||
+			strcmp(instruct, "slt") || strcmp(instruct, "or") ||
 			strcmp(instruct, "nand"))
 		{
-			R_Type(instruct, instruction,  j,  i);
+			R_Type(instruct, instruction, j, i);
 		}
 		else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
-			     strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
-			     strcmp(instruct, "lw")   || strcmp(instruct, "sw")  ||
-			     strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
+			strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
+			strcmp(instruct, "lw") || strcmp(instruct, "sw") ||
+			strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 		{
-			I_Type(instruct, instruction, j, i,symbol_Table,symbol_Table_size);
+			I_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+		}
+		else if (strcmp(instruct, "j") || strcmp(instruct, "halt"))
+		{
+			J_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
 		}
 		else
-		{
-
-		}
-
+			exit(1);
+		//خروجی یک به علت آپ کد تعریف نشده.
 	}
 }
 
