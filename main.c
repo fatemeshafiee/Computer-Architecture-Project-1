@@ -434,8 +434,45 @@ unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
 		while (instruction[i][j] == " ")
 			j++;
 		unsigned long int final_result;
-
+		final_result = seprator_J(instruction, j, i, symbol_Table, symbol_Table_size);
+		return final_result;
 	}
+}
+
+unsigned long int fill_directive(char** instruction, int i, int j,
+								struct MAP_lable* symbol_Table, int symbol_Table_size)
+{
+	while (instruction[i][j] == ' ')
+		j++;
+	char what_num[] = "";
+	strcat(instruction[i][j], " ");
+	while (instruction[i][j] != ' ')
+	{
+		strcat(what_num, instruction[i][j]);
+		j++;
+	}
+	unsigned long int what_int = 0;
+	if ((what_num[i] >= '0' && what_num[i] <= '9') || what_num == '-')
+	{
+		int tenth = 1, i = 0;
+		if (what_num[0] == '-')
+			i = 1;
+		for (; i < strlen(what_num); i++)
+		{
+			what_int += (what_num[i] - '0');
+		}
+		if (what_num[0] == '-')
+			what_int *= -1;
+	}
+	else
+	{
+		what_int = search_on_Map_lable(symbol_Table, symbol_Table_size, what_num);
+		if (what_int == -1)
+		{
+			exit(1);
+		}
+	}
+	return what_int;
 }
 
 void What_kind(char ** instruction, int instruction_counter,
@@ -461,22 +498,36 @@ void What_kind(char ** instruction, int instruction_counter,
 		// is it true?! //what do you mean?
 		// J is now whatever after the instruction. $rd, $rs, %rt
 		// so we're gonna send j to the function to use it
+
+		unsigned long int final_result;
+
 		if (strcmp(instruct, "add") || strcmp(instruct, "sub") ||
 			strcmp(instruct, "slt") || strcmp(instruct, "or") ||
 			strcmp(instruct, "nand"))
 		{
-			R_Type(instruct, instruction, j, i);
+			final_result = R_Type(instruct, instruction, j, i);
 		}
+
 		else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
 			strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
 			strcmp(instruct, "lw") || strcmp(instruct, "sw") ||
 			strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 		{
-			I_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+			final_result = I_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
 		}
+
 		else if (strcmp(instruct, "j") || strcmp(instruct, "halt"))
 		{
-			J_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+			final_result = J_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+		}
+
+		else if (strcmp(instruct, ".fill"))
+		{
+			final_result = fill_directive(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+		}
+		else if (strcmp(instruct, ".space"))
+		{
+
 		}
 		else
 			exit(1);
