@@ -409,7 +409,7 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 		j++;
 	}
 	int index = 0, INT_offset = 0, tenth = 1;
-	if (offset[index] >= 0 && offset[index] <= 9)
+	if (offset[index] >= '0' && offset[index] <= '9')
 	{
 		for (int k = 0; k < strlen(offset); k++)
 		{
@@ -448,7 +448,7 @@ unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
 	}
 }
 
-unsigned long int fill_directive(char** instruction, int i, int j,
+unsigned long int directive(char** instruction, int i, int j,
 								struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	while (instruction[i][j] == ' ')
@@ -468,7 +468,9 @@ unsigned long int fill_directive(char** instruction, int i, int j,
 			i = 1;
 		for (; i < strlen(what_num); i++)
 		{
+			what_int = what_int * tenth;
 			what_int += (what_num[i] - '0');
+			tenth *= 10;
 		}
 		if (what_num[0] == '-')
 			what_int *= -1;
@@ -530,14 +532,11 @@ void What_kind(char ** instruction, int instruction_counter,
 			final_result = J_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
 		}
 
-		else if (strcmp(instruct, ".fill"))
+		else if (strcmp(instruct, ".fill") || strcmp(instruct, ".space"))
 		{
-			final_result = fill_directive(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+			final_result = directive(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
 		}
-		else if (strcmp(instruct, ".space"))
-		{
-
-		}
+		
 		else
 			exit(1);
 		//خروجی یک به علت آپ کد تعریف نشده.
