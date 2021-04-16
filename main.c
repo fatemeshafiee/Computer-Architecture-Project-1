@@ -234,7 +234,6 @@ char* connector_I(char* op_code, char* rs, char* rt, char* imm)
 unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, char* instruct,
 	                         struct MAP_lable* symbol_Table, int symbol_Table_size )
 {
-	strcat(instruction[i], " ");
 
 	int rs = 0, rt = 0, INT_imm=0, tenth = 1, tdd = 0;
 
@@ -310,26 +309,32 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 			tenth *= 10;
 			j++;
 		}
-		if (imm[0] >= '0' && imm[0] <= '9')
+		if (strlen(imm) != 0) 
 		{
-			tenth = 1;
-
-			for (int k = 0; k < strlen(imm); k++)
+			if (imm[0] >= '0' && imm[0] <= '9')
 			{
-				INT_imm = INT_imm * tenth;
+				tenth = 1;
 
-				INT_imm += (imm[k] - '0');
-				tenth *= 10;			
+				for (int k = 0; k < strlen(imm); k++)
+				{
+					INT_imm = INT_imm * tenth;
+
+					INT_imm += (imm[k] - '0');
+					tenth *= 10;
+				}
 			}
-		}
-		else
-		{
-			INT_imm = search_on_Map_lable(symbol_Table,symbol_Table_size,imm);
-			if (INT_imm == -1)
+			else
 			{
-				exit(1);
+				INT_imm = search_on_Map_lable(symbol_Table, symbol_Table_size, imm);
+				if (INT_imm == -1)
+				{
+					exit(1);
+				}
 			}
+
 		}
+		
+		
 	}
 
 	return Binary_To_Decimal(connector_I(op_code,Decimal_To_Binary(rs,4), Decimal_To_Binary(rt,4), Decimal_To_Binary(INT_imm,15)),32);	 
@@ -370,6 +375,10 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
 	else if (strcmp(instruct, "beq"))
 	{
 		final_result = seprator_I(instruction, j, i, "1011", instruct, symbol_Table, symbol_Table_size);
+	}
+	else if (strcmp(instruct, "jalr"))
+	{
+		final_result = seprator_I(instruction, j, i, "1100", instruct, symbol_Table, symbol_Table_size);
 	}
 
 	return final_result;
