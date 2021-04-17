@@ -78,13 +78,13 @@ char * Decimal_To_Binary(int n, int size)
 	while (n > 0)
 	{
 		rest = n % 2;
-		strcat_s(binary,strlen(binary)+strlen(rest), rest, strlen(rest));
+		strcat_s(binary,strlen(binary), rest, strlen(rest));
 		n /= 2;
 		cnt++;
 	}
 	while (cnt < size)
 	{
-		strcat_s(binary,strlen(binary)+1, "0",1);
+		strcat_s(binary,strlen(binary), "0",1);
 		cnt++;
 	}
 	if (size == 16 && strlen(binary) > 16)
@@ -112,15 +112,15 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total)+1, '0',1);
+		strcat_s(total, strlen(total), '0',1);
 	}
-	strcat_s(total, strlen(total)+strlen(op_code), op_code, strlen(op_code));
-	strcat_s(total, strlen(total) + strlen(rs), rs, strlen(rs));
-	strcat_s(total, strlen(total) + strlen(rt), rt, strlen(rt));
-	strcat_s(total, strlen(total) + strlen(rd), rd, strlen(rd));
+	strcat_s(total, strlen(total), op_code, strlen(op_code));
+	strcat_s(total, strlen(total) , rs, strlen(rs));
+	strcat_s(total, strlen(total) , rt, strlen(rt));
+	strcat_s(total, strlen(total) , rd, strlen(rd));
 	for (i = 11; i >= 0; i--)
 	{
-		strcat_s(total,strlen(total)+1 ,"0",1);
+		strcat_s(total,strlen(total) ,"0",1);
 	}
 
 	return total;
@@ -128,7 +128,7 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, char* instruct)
 {
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
-	strcat_s(instruction[i],strlen(instruction[i])+1, " ",1);
+	strcat_s(instruction[i],strlen(instruction[i]), " ",1);
 	while (instruction[i][j] != " " && instruction[i][j] != '#')
 	{
 		if (instruction[i][j] == ',')
@@ -220,12 +220,12 @@ char* connector_I(char* op_code, char* rs, char* rt, char* imm)
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total)+1, "0",1);
+		strcat_s(total, strlen(total), "0",1);
 	}
-	strcat_s(total, strlen(total) + strlen(op_code),op_code,strlen(op_code));
-	strcat_s(total, strlen(total) + strlen(rs), rs,strlen(rs));
-	strcat_s(total, strlen(total) + strlen(rt),rt, strlen(rt));
-	strcat_s(total, strlen(total) + strlen(imm),imm, strlen(imm));
+	strcat_s(total, strlen(total) ,op_code,strlen(op_code));
+	strcat_s(total, strlen(total) , rs,strlen(rs));
+	strcat_s(total, strlen(total) ,rt, strlen(rt));
+	strcat_s(total, strlen(total) ,imm, strlen(imm));
 
 
 	return total;
@@ -238,7 +238,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 	int rs = 0, rt = 0, INT_imm=0, tenth = 1, tdd = 0;
 
 	char imm[] ="";
-	strcat_s(instruction[i],strlen(instruction[i])+1, " ");
+	strcat_s(instruction[i],strlen(instruction[i]), " ");
 	if (instruct == "lui")
 	{
 		while (instruction[i][j] != " " && instruction[i][j] != '#')
@@ -256,7 +256,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 			}
 			else
 			{
-				strcat_s(imm,strlen(imm)+1, instruction[i][j]);
+				strcat_s(imm,strlen(imm), instruction[i][j]);
 			}
 			tenth *= 10;
 			j++;
@@ -304,7 +304,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 			}
 			else
 			{
-				strcat_s(imm,strlen(imm)+1, instruction[i][j]);
+				strcat_s(imm,strlen(imm), instruction[i][j]);
 			}
 			tenth *= 10;
 			j++;
@@ -390,11 +390,11 @@ char* connector_J(char* op_code, char* offset)
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total)+1, '0', 1);
+		strcat_s(total, strlen(total), '0', 1);
 	}
-	strcat_s(total,strlen(total)+strlen(op_code) ,op_code,strlen(op_code));
-	strcat_s(total,strlen(total)+8, "00000000",8);
-	strcat_s(total,strlen(total)+ strlen(offset),offset, strlen(offset) );
+	strcat_s(total,strlen(total) ,op_code,strlen(op_code));
+	strcat_s(total,strlen(total), "00000000",8);
+	strcat_s(total,strlen(total),offset, strlen(offset) );
 	return total;
 }
 
@@ -402,10 +402,10 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	char offset[] = "";
-	strcat_s(instruction[i], strlen(instruction[i])+1, " ", 1);
+	strcat_s(instruction[i], strlen(instruction[i]), " ", 1);
 	while (instruction[i][j] != " " || instruction[i][j] != '#')
 	{
-		strcat_s(offset,strlen(offset)+1, instruction[i][j],1);
+		strcat_s(offset,strlen(offset), instruction[i][j],1);
 		j++;
 	}
 	int index = 0, INT_offset = 0, tenth = 1;
@@ -454,7 +454,7 @@ unsigned long int directive(char** instruction, int i, int j,
 	while (instruction[i][j] == ' ')
 		j++;
 	char what_num[] = "";
-	strcat_s(instruction[i],strlen(instruction[i])+1, " ",1);
+	strcat_s(instruction[i],strlen(instruction[i]), " ",1);
 	while (instruction[i][j] != ' ')
 	{
 		strcat_s(what_num, instruction[i][j],1);
@@ -499,7 +499,7 @@ unsigned long int What_kind(char ** instruction, int instruction_counter, int i,
 		}
 		while (instruction[i][j] != " ")
 		{
-			strcat_s(instruct,strlen(instruct)+1, instruction[i][j],1);
+			strcat_s(instruct,strlen(instruct), instruction[i][j],1);
 			
 			j++;
 		} 
