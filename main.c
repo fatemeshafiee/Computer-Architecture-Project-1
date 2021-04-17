@@ -559,19 +559,17 @@ void fill_instruction(char** instruction)
 	char path[100] = "";
 	printf("\nenter address of your file: ");
 	gets(path);
-	//C:\\C\\test2.as
-	// for command promp   C:\C\Project2AR\Project2AR>gcc -std=c99 mehran.c
-	FILE* mf = fopen(path, "r");
-	if (mf == NULL)
+	FILE* Input = fopen(path, "r");
+	if (Input == NULL)
 	{
 		printf("???");
 			exit(1);
-		}
+	}
 
 
 		int j = 0;
 		int count = 0;
-		while (fgets(instruction[j], sizeof(instruction[j]), mf))
+		while (fgets(instruction[j], sizeof(instruction[j]), Input))
 		{
 			//strcpy(mat[j] , line);
 			printf("%s", instruction[j]);
@@ -581,19 +579,21 @@ void fill_instruction(char** instruction)
 		}
 }
 
-int main(int argc, char* argv[])
+int main()
 {
 	FILE* Input;
-	fopen_s(&Input, argv[1], "r");
+	//fopen_s(&Input, argv[1], "r");
 	FILE* Output;
-	fopen_s(&Output,argv[2], "w");
+	//fopen_s(&Output,argv[2], "w");
 	char* instruction[65537] = {0};
 	int instruction_counter = 0;
-	while (fgets(instruction[instruction_counter], MAX_LINE_LENGTH, Input))
+	/*while (fgets(instruction[instruction_counter], MAX_LINE_LENGTH, Input))
 	{
 		instruction[instruction_counter][strlen(instruction_counter) - 1] = '\0';
 		instruction_counter++;
 	}
+	*/
+	fill_instruction(instruction);
 
 	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
 	int symbol_Table_Size = 0;
