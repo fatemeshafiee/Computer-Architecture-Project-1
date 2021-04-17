@@ -486,11 +486,9 @@ unsigned long int directive(char** instruction, int i, int j,
 	return what_int;
 }
 
-void What_kind(char ** instruction, int instruction_counter,
+unsigned long int What_kind(char ** instruction, int instruction_counter, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
-	for (int i = 0; i < instruction_counter; i++)
-	{
 		int j;
 		char instruct []="";
 		for (j = 0; instruction[i][j] != " "; j++); // اگر لیبلی وجود داره، ردش میکنیم
@@ -540,10 +538,20 @@ void What_kind(char ** instruction, int instruction_counter,
 		else
 			exit(1);
 		//خروجی یک به علت آپ کد تعریف نشده.
-	}
+		return final_result;
 }
 
-void 
+void write_file(char** instruction, FILE* output, int instruction_counter, 
+				struct MAP_lable* symbol_Table, int symbol_Table_size)
+{
+	unsigned long int final_result;
+	for (int i = 0; i < instruction_counter; i++)
+	{
+		final_result = What_kind(instruction, instruction_counter, i, symbol_Table, symbol_Table_size);
+		putw(final_result, output);
+		fputs("\n", output);
+	}
+}
 
 int main(int argc, char* argv[])
 {
@@ -564,7 +572,7 @@ int main(int argc, char* argv[])
 	
 	first_scan(Input, symbol_Table, instruction, symbol_Table_Size);
 
-
+	write_file(instruction, Output, instruction_counter, symbol_Table, symbol_Table_Size);
 
 	return 0;
 
