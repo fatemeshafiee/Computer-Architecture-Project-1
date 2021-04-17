@@ -554,6 +554,33 @@ void write_file(char** instruction, FILE* output, int instruction_counter,
 	}
 }
 
+void fill_instruction(char** instruction)
+{
+	char path[100] = "";
+	printf("\nenter address of your file: ");
+	gets(path);
+	//C:\\C\\test2.as
+	// for command promp   C:\C\Project2AR\Project2AR>gcc -std=c99 mehran.c
+	FILE* mf = fopen(path, "r");
+	if (mf == NULL)
+	{
+		printf("???");
+			exit(1);
+		}
+
+
+		int j = 0;
+		int count = 0;
+		while (fgets(instruction[j], sizeof(instruction[j]), mf))
+		{
+			//strcpy(mat[j] , line);
+			printf("%s", instruction[j]);
+			int label = instruction[j];
+			j++;
+			count++;
+		}
+}
+
 int main(int argc, char* argv[])
 {
 	FILE* Input;
