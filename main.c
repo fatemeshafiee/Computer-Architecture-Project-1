@@ -229,9 +229,8 @@ unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
 }
 
 //  I type
-char* connector_I(char* op_code, char* rs, char* rt, char* imm)
+void connector_I(char* op_code, char* rs, char* rt, char* imm, char* total)
 {
-	char total[] = "";
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
@@ -351,8 +350,10 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 
 
 	}
-
-	return Binary_To_Decimal(connector_I(op_code, Decimal_To_Binary(rs, 4), Decimal_To_Binary(rt, 4), Decimal_To_Binary(INT_imm, 15)), 32);
+	char* total = "";
+	connector_I(op_code, Decimal_To_Binary(rs, 4), Decimal_To_Binary(rt, 4),
+		Decimal_To_Binary(INT_imm, 15), total);
+	return Binary_To_Decimal(total, 32);
 }
 
 unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
@@ -399,9 +400,8 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
 	return final_result;
 }
 
-char* connector_J(char* op_code, char* offset)
+void connector_J(char* op_code, char* offset, char* total)
 {
-	char total[] = "";
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
@@ -442,7 +442,9 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 			exit(1);
 		}
 	}
-	return Binary_To_Decimal(connector_J("1101", Decimal_To_Binary(INT_offset, 16)), 32);
+	char* total = "";
+	connector_J("1101", Decimal_To_Binary(INT_offset, 16), total);
+	return Binary_To_Decimal(total, 32);
 }
 
 unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
