@@ -560,18 +560,20 @@ unsigned long int What_kind(char** instruction, int instruction_counter, int i,
 
 void write_file(char** instruction, FILE* output, int instruction_counter,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
-{
+{ 
+	
 	unsigned long int final_result;
 	for (int i = 0; i < instruction_counter; i++)
 	{
+	
 		final_result = What_kind(instruction, instruction_counter, i, symbol_Table, symbol_Table_size);
 		printf("%d\n", final_result);
 		//(final_result, output);
-		fputs("\n", output);
+		//fputs("\n", output);
 	}
 }
 
-void fill_instruction(char instruction[][200], int instruction_counter)
+void fill_instruction(char instruction[][200], int * instruction_counter)
 {
 
 	char path[100] = "";
@@ -590,11 +592,11 @@ void fill_instruction(char instruction[][200], int instruction_counter)
 
 	int count = 0;
 
-	while (fgets(instruction[instruction_counter], 200, Input))
+	while (fgets(instruction[(*instruction_counter)], 200, Input))
 	{
-		printf("%s", instruction[instruction_counter]);
-		instruction[instruction_counter][strlen(instruction[instruction_counter]) - 1] = '\0';
-		instruction_counter++;
+		printf("%s", instruction[(*instruction_counter)]);
+		instruction[(*instruction_counter)][strlen(instruction[(*instruction_counter)]) - 1] = '\0';
+		(*instruction_counter)=(*instruction_counter)+1;
 	}
 
 }
@@ -608,14 +610,16 @@ int main(int argc, char* argv[])
 	int instruction_counter = 0;
 	char* instruction[65537];
 
-	fill_instruction(instruction, instruction_counter);
+	fill_instruction(instruction, &instruction_counter);
+
 
 	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
 	int symbol_Table_Size = 0;
 
 	first_scan(Input, symbol_Table, instruction, symbol_Table_Size);
 
-	//write_file(instruction, Output, instruction_counter, symbol_Table, symbol_Table_Size);
+
+	write_file(instruction, Output, instruction_counter, symbol_Table, symbol_Table_Size);
 
 	return 0;
 
