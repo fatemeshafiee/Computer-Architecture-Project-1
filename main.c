@@ -543,6 +543,7 @@ void What_kind(char ** instruction, int instruction_counter,
 	}
 }
 
+void 
 
 int main(int argc, char* argv[])
 {
@@ -562,6 +563,7 @@ int main(int argc, char* argv[])
 	int symbol_Table_Size = 0;
 	
 	first_scan(Input, symbol_Table, instruction, symbol_Table_Size);
+
 
 
 	return 0;
