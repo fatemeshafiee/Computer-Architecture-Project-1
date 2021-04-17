@@ -79,9 +79,9 @@ void first_scan(struct MAP_lable* symbol_Table, char** instruction,
 }
 
 //function to transfer binary to int
-char* Decimal_To_Binary(int n, int size)
+void  Decimal_To_Binary(int n, int size, char *binary)
 {
-	char binary[] = " ", rest;
+	char rest;
 	int cnt = 0;
 	while (n > 0)
 	{
@@ -191,8 +191,13 @@ unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, ch
 		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
 	char* total = "";
-	connector_R(op_code, Decimal_To_Binary(rs, 4),
-		Decimal_To_Binary(rt, 4), Decimal_To_Binary(rd, 4), total);
+	char* binary_rs = "";
+	char* binary_rt = "";
+	char* binary_rd = "";
+	Decimal_To_Binary(rs, 4, binary_rs);
+	Decimal_To_Binary(rt, 4, binary_rt);
+	Decimal_To_Binary(rd, 4, binary_rd);
+	connector_R(op_code,binary_rs ,binary_rt,binary_rd , total);
 	return Binary_To_Decimal(total, 32);
 }
 
@@ -351,8 +356,13 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 
 	}
 	char* total = "";
-	connector_I(op_code, Decimal_To_Binary(rs, 4), Decimal_To_Binary(rt, 4),
-		Decimal_To_Binary(INT_imm, 15), total);
+	char* binary_rs = "";
+	char* binary_rt = "";
+	char* binary_imm = "";
+	Decimal_To_Binary(rs, 4, binary_rs);
+	Decimal_To_Binary(rt, 4, binary_rt);
+	Decimal_To_Binary(INT_imm, 4, binary_imm);
+	connector_I(op_code, binary_rs, binary_rt, binary_imm, total);
 	return Binary_To_Decimal(total, 32);
 }
 
@@ -443,7 +453,10 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 		}
 	}
 	char* total = "";
-	connector_J("1101", Decimal_To_Binary(INT_offset, 16), total);
+	char* offset="";
+	Decimal_To_Binary(INT_offset, 16, offset);
+
+	connector_J("1101",offset, total);
 	return Binary_To_Decimal(total, 32);
 }
 
@@ -579,7 +592,7 @@ void fill_instruction(char instruction[][200], int * instruction_counter)
 	char path[100] = "";
 	printf("\nenter address of your file: ");
 	gets(path);
-	FILE* Input = fopen("H:\\4\\CA_pro_trytorun\\CA_try_line\\test_I.txt", "r");
+	FILE* Input = fopen(path, "r");
 	if (Input == NULL)
 	{
 		printf("???");
