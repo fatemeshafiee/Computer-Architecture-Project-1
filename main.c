@@ -123,9 +123,8 @@ unsigned long int Binary_To_Decimal(char* number, int size)
 }
 
 //فعلا برای R_Type
-char* connector_R(char* op_code, char* rs, char* rt, char* rd)
+void connector_R(char* op_code, char* rs, char* rt, char* rd, char * total)
 {
-	char total[] = "";
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
@@ -139,8 +138,6 @@ char* connector_R(char* op_code, char* rs, char* rt, char* rd)
 	{
 		strcat_s(total, strlen(total), "0");
 	}
-
-	return total;
 }
 unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, char* instruct)
 {
@@ -193,9 +190,10 @@ unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, ch
 	{
 		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
-
-	return Binary_To_Decimal(connector_R(op_code, Decimal_To_Binary(rs, 4),
-		Decimal_To_Binary(rt, 4), Decimal_To_Binary(rd, 4)), 32);
+	char* total = "";
+	connector_R(op_code, Decimal_To_Binary(rs, 4),
+		Decimal_To_Binary(rt, 4), Decimal_To_Binary(rd, 4), total);
+	return Binary_To_Decimal(total, 32);
 }
 
 unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
