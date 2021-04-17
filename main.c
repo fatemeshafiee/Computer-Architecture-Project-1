@@ -412,6 +412,7 @@ unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
 
 void connector_J(char* op_code, char* offset, char* total)
 {
+	printf("j connector\n");
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
@@ -426,6 +427,7 @@ void connector_J(char* op_code, char* offset, char* total)
 unsigned long int seprator_J(char** instruction, int j, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
+	printf("j seprator\n");
 	char offset[] = "";
 	strcat_s(instruction[i], strlen(instruction[i]), " ");
 	while (instruction[i][j] != " " || instruction[i][j] != '#')
@@ -463,6 +465,7 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
+	printf("j type\n");
 	//هالت هیچی نداره، جی هم یکی  داره.
 	if (instruct == "halt")
 	{
@@ -519,6 +522,7 @@ unsigned long int directive(char** instruction, int i, int j,
 unsigned long int What_kind(char** instruction, int instruction_counter, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
+	printf("what kind\n");
 	int j;
 	char instruct[] = "";
 	for (j = 0; instruction[i][j] != " "; j++); // اگر لیبلی وجود داره، ردش میکنیم
@@ -578,6 +582,7 @@ void write_file(char** instruction, FILE* output, int instruction_counter,
 	unsigned long int final_result;
 	for (int i = 0; i < instruction_counter; i++)
 	{
+		printf("in the for\n");
 	
 		final_result = What_kind(instruction, instruction_counter, i, symbol_Table, symbol_Table_size);
 		printf("%d\n", final_result);
@@ -629,7 +634,7 @@ int main(int argc, char* argv[])
 	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
 	int symbol_Table_Size = 0;
 
-	first_scan(Input, symbol_Table, instruction, symbol_Table_Size);
+	first_scan( symbol_Table, instruction, symbol_Table_Size,instruction_counter);
 
 
 	write_file(instruction, Output, instruction_counter, symbol_Table, symbol_Table_Size);
