@@ -525,7 +525,7 @@ unsigned long int What_kind( int i,
 {
 	printf("what kind\n");
 	int j;
-	char instruct[] = "";
+	char instruct[20] = "";
 	for (j = 0; instruction[i][j] != ' '; j++); // اگر لیبلی وجود داره، ردش میکنیم
 	while (instruction[i][j] == ' ')
 	{
@@ -542,6 +542,7 @@ unsigned long int What_kind( int i,
 	// is it true?! //what do you mean?
 	// J is now whatever after the instruction. $rd, $rs, %rt
 	// so we're gonna send j to the function to use it
+	printf("%s\n", instruct);
 
 	unsigned long int final_result;
 
@@ -584,7 +585,7 @@ void write_file( FILE* output,
 	unsigned long int final_result;
 	for (int i = 0; i < instruction_counter; i++)
 	{
-		printf("in the for\n");
+		printf("in the for\n%d\n",i);
 	
 		final_result = What_kind( i, symbol_Table, symbol_Table_size);
 		printf("%d\n", final_result);
