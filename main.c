@@ -4,7 +4,7 @@
 #include <math.h>
 
 #define MAX_LINE_LENGTH 100
-char* instruction[65537];
+char instruction[65537][200];
 int instruction_counter = 0;
 
 //16 رجیستر داریم
@@ -44,7 +44,7 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table, int symbol_Table_size, c
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
 void first_scan(struct MAP_lable* symbol_Table,
-	int symbol_Table_Size, int instruction_counter)
+	int symbol_Table_Size)
 {
 	for (int i = 0; i < instruction_counter; i++)
 	{
@@ -520,7 +520,7 @@ unsigned long int directive( int i, int j,
 	return what_int;
 }
 
-unsigned long int What_kind( int instruction_counter, int i,
+unsigned long int What_kind( int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf("what kind\n");
@@ -576,17 +576,17 @@ unsigned long int What_kind( int instruction_counter, int i,
 	return final_result;
 }
 
-void write_file( FILE* output, int instruction_counter,
+void write_file( FILE* output,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 { 
-	printf("first of write \n");
-	printf("%d\n", instruction_counter);
+	//printf("first of write \n");
+	//printf("%d\n", instruction_counter);
 	unsigned long int final_result;
 	for (int i = 0; i < instruction_counter; i++)
 	{
 		printf("in the for\n");
 	
-		final_result = What_kind(instruction_counter, i, symbol_Table, symbol_Table_size);
+		final_result = What_kind( i, symbol_Table, symbol_Table_size);
 		printf("%d\n", final_result);
 		//(final_result, output);
 		//fputs("\n", output);
@@ -614,10 +614,12 @@ void fill_instruction( )
 
 	while (fgets(instruction[(instruction_counter)], 200, Input))
 	{
+		
 		printf("%s", instruction[(instruction_counter)]);
 		instruction[(instruction_counter)][strlen(instruction[(instruction_counter)]) - 1] = '\0';
 		(instruction_counter)=(instruction_counter)+1;
 	}
+	printf("%d", instruction_counter);
 
 }
 
@@ -630,16 +632,17 @@ int main(int argc, char* argv[])
 	
 	
 
-	fill_instruction(&instruction_counter);
+	fill_instruction();
 
 
 	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
 	int symbol_Table_Size = 0;
+	first_scan(symbol_Table, symbol_Table_Size);
+	write_file(Output, symbol_Table, symbol_Table_Size);
+	
 
-	first_scan( symbol_Table, symbol_Table_Size,instruction_counter);
 
-
-	write_file( Output, instruction_counter, symbol_Table, symbol_Table_Size);
+	
 
 	return 0;
 
