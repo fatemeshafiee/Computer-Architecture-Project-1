@@ -4,6 +4,8 @@
 #include <math.h>
 
 #define MAX_LINE_LENGTH 100
+char* instruction[65537];
+int instruction_counter = 0;
 
 //16 رجیستر داریم
 // مقدار رجیستر اول همیشه صفر است.
@@ -41,15 +43,15 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table, int symbol_Table_size, c
 }
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
-void first_scan(struct MAP_lable* symbol_Table, char** instruction,
+void first_scan(struct MAP_lable* symbol_Table,
 	int symbol_Table_Size, int instruction_counter)
 {
 	for (int i = 0; i < instruction_counter; i++)
 	{
-		if (instruction[i][0] != " ")
+		if (instruction[i][0] != ' ')
 		{
 			int j;
-			for (j = 0; instruction[i][j] != " "; j++);
+			for (j = 0; instruction[i][j] != ' '; j++);
 			//char newlable[10] = { 0 };
 			char* newlable = malloc(j * sizeof(char));
 			for (int k = 0; k < j; k++)
@@ -106,7 +108,7 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 	{
 		reversed_bin[k] = binary[size - k - 1];
 	}
-	return reversed_bin;
+	
 
 
 }
@@ -139,11 +141,11 @@ void connector_R(char* op_code, char* rs, char* rt, char* rd, char * total)
 		strcat_s(total, strlen(total), "0");
 	}
 }
-unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, char* instruct)
+unsigned long int seprator_R( int j, int i, char* op_code, char* instruct)
 {
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
 	strcat_s(instruction[i], strlen(instruction[i]), " ");
-	while (instruction[i][j] != " " && instruction[i][j] != '#')
+	while (instruction[i][j] !=' ' && instruction[i][j] != '#')
 	{
 		if (instruction[i][j] == ',')
 		{
@@ -201,34 +203,34 @@ unsigned long int seprator_R(char** instruction, int j, int i, char* op_code, ch
 	return Binary_To_Decimal(total, 32);
 }
 
-unsigned long int R_Type(char* instruct, char** instruction, int j, int i)
+unsigned long int R_Type(char* instruct,  int j, int i)
 {
 	// instruction $rd, $rs, $rt
 	// in machin code : 0000 op-code rs rt rd
 	// j is a index of first space after instruct
-	while (instruction[i][j] == " ")
+	while (instruction[i][j] == ' ')
 		j++;
 
 	unsigned long int final_result;
 	if (strcmp(instruct, "add"))
 	{
-		final_result = seprator_R(instruction, j, i, "0000", instruct);
+		final_result = seprator_R( j, i, "0000", instruct);
 	}
 	else if (strcmp(instruct, "sub"))
 	{
-		final_result = seprator_R(instruction, j, i, "0001", instruct);
+		final_result = seprator_R( j, i, "0001", instruct);
 	}
 	else if (strcmp(instruct, "slt"))
 	{
-		final_result = seprator_R(instruction, j, i, "0010", instruct);
+		final_result = seprator_R( j, i, "0010", instruct);
 	}
 	else if (strcmp(instruct, "or"))
 	{
-		final_result = seprator_R(instruction, j, i, "0011", instruct);
+		final_result = seprator_R( j, i, "0011", instruct);
 	}
 	else if (strcmp(instruct, "nand"))
 	{
-		final_result = seprator_R(instruction, j, i, "0100", instruct);
+		final_result = seprator_R( j, i, "0100", instruct);
 	}
 	return final_result;
 }
@@ -247,10 +249,10 @@ void connector_I(char* op_code, char* rs, char* rt, char* imm, char* total)
 	strcat_s(total, strlen(total), imm);
 
 
-	return total;
+	
 }
 
-unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, char* instruct,
+unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 
@@ -260,7 +262,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 	strcat_s(instruction[i], strlen(instruction[i]), " ");
 	if (instruct == "lui")
 	{
-		while (instruction[i][j] != " " && instruction[i][j] != '#')
+		while (instruction[i][j] != ' ' && instruction[i][j] != '#')
 		{
 
 			if (instruction[i][j] == ',')
@@ -303,7 +305,7 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 	}
 	else
 	{
-		while (instruction[i][j] != " " && instruction[i][j] != '#')
+		while (instruction[i][j] != ' ' && instruction[i][j] != '#')
 		{
 
 			if (instruction[i][j] == ',')
@@ -366,45 +368,45 @@ unsigned long int seprator_I(char** instruction, int j, int i, char* op_code, ch
 	return Binary_To_Decimal(total, 32);
 }
 
-unsigned long int I_Type(char* instruct, char** instruction, int j, int i,
+unsigned long int I_Type(char* instruct, int j, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
-	while (instruction[i][j] == " ")
+	while (instruction[i][j] ==  ' ' )
 		j++;
 	unsigned long int final_result;
 	if (strcmp(instruct, "addi"))
 	{
-		final_result = seprator_I(instruction, j, i, "0101", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "0101", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "slti"))
 	{
-		final_result = seprator_I(instruction, j, i, "0110", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "0110", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "ori"))
 	{
-		final_result = seprator_I(instruction, j, i, "0111", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "0111", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "lui"))
 	{
-		final_result = seprator_I(instruction, j, i, "1000", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "1000", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "lw"))
 	{
-		final_result = seprator_I(instruction, j, i, "1001", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I(j, i, "1001", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "sw"))
 	{
-		final_result = seprator_I(instruction, j, i, "1010", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "1010", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "beq"))
 	{
-		final_result = seprator_I(instruction, j, i, "1011", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "1011", instruct, symbol_Table, symbol_Table_size);
 	}
 	else if (strcmp(instruct, "jalr"))
 	{
-		final_result = seprator_I(instruction, j, i, "1100", instruct, symbol_Table, symbol_Table_size);
+		final_result = seprator_I( j, i, "1100", instruct, symbol_Table, symbol_Table_size);
 	}
 
 	return final_result;
@@ -421,16 +423,15 @@ void connector_J(char* op_code, char* offset, char* total)
 	strcat_s(total, strlen(total), op_code);
 	strcat_s(total, strlen(total), "00000000");
 	strcat_s(total, strlen(total), offset);
-	return total;
+	
 }
 
-unsigned long int seprator_J(char** instruction, int j, int i,
-	struct MAP_lable* symbol_Table, int symbol_Table_size)
+unsigned long int seprator_J( int j, int i, struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf("j seprator\n");
 	char offset[] = "";
 	strcat_s(instruction[i], strlen(instruction[i]), " ");
-	while (instruction[i][j] != " " || instruction[i][j] != '#')
+	while (instruction[i][j] != ' ' || instruction[i][j] != '#')
 	{
 		strcat_s(offset, strlen(offset), instruction[i][j]);
 		j++;
@@ -455,14 +456,14 @@ unsigned long int seprator_J(char** instruction, int j, int i,
 		}
 	}
 	char* total = "";
-	char* offset="";
-	Decimal_To_Binary(INT_offset, 16, offset);
+	char* Offset="";
+	Decimal_To_Binary(INT_offset, 16, Offset);
 
-	connector_J("1101",offset, total);
+	connector_J("1101",Offset, total);
 	return Binary_To_Decimal(total, 32);
 }
 
-unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
+unsigned long int J_Type( char* instruct, int i, int j,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf("j type\n");
@@ -473,15 +474,15 @@ unsigned long int J_Type(char** instruction, char* instruct, int i, int j,
 	}
 	else
 	{
-		while (instruction[i][j] == " ")
+		while (instruction[i][j] == ' ')
 			j++;
 		unsigned long int final_result;
-		final_result = seprator_J(instruction, j, i, symbol_Table, symbol_Table_size);
+		final_result = seprator_J( j, i, symbol_Table, symbol_Table_size);
 		return final_result;
 	}
 }
 
-unsigned long int directive(char** instruction, int i, int j,
+unsigned long int directive( int i, int j,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	while (instruction[i][j] == ' ')
@@ -519,19 +520,19 @@ unsigned long int directive(char** instruction, int i, int j,
 	return what_int;
 }
 
-unsigned long int What_kind(char** instruction, int instruction_counter, int i,
+unsigned long int What_kind( int instruction_counter, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf("what kind\n");
 	int j;
 	char instruct[] = "";
-	for (j = 0; instruction[i][j] != " "; j++); // اگر لیبلی وجود داره، ردش میکنیم
-	while (instruction[i][j] == " ")
+	for (j = 0; instruction[i][j] != ' '; j++); // اگر لیبلی وجود داره، ردش میکنیم
+	while (instruction[i][j] == ' ')
 	{
 		//  تا رسیدن به اولین اینستراکشن، اسپیس ها رو هم رد میکنیم
 		j++;
 	}
-	while (instruction[i][j] != " ")
+	while (instruction[i][j] != ' ')
 	{
 		strcat_s(instruct, strlen(instruct), instruction[i][j]);
 
@@ -548,7 +549,7 @@ unsigned long int What_kind(char** instruction, int instruction_counter, int i,
 		strcmp(instruct, "slt") || strcmp(instruct, "or") ||
 		strcmp(instruct, "nand"))
 	{
-		final_result = R_Type(instruct, instruction, j, i);
+		final_result = R_Type(instruct, j, i);
 	}
 
 	else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
@@ -556,17 +557,17 @@ unsigned long int What_kind(char** instruction, int instruction_counter, int i,
 		strcmp(instruct, "lw") || strcmp(instruct, "sw") ||
 		strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
 	{
-		final_result = I_Type(instruct, instruction, j, i, symbol_Table, symbol_Table_size);
+		final_result = I_Type(instruct, j, i, symbol_Table, symbol_Table_size);
 	}
 
 	else if (strcmp(instruct, "j") || strcmp(instruct, "halt"))
 	{
-		final_result = J_Type(instruction, instruct, i, j, symbol_Table, symbol_Table_size);
+		final_result = J_Type( instruct, i, j, symbol_Table, symbol_Table_size);
 	}
 
 	else if (strcmp(instruct, ".fill") || strcmp(instruct, ".space"))
 	{
-		final_result = directive(instruction, i, j, symbol_Table, symbol_Table_size);
+		final_result = directive( i, j, symbol_Table, symbol_Table_size);
 	}
 
 	else
@@ -575,23 +576,24 @@ unsigned long int What_kind(char** instruction, int instruction_counter, int i,
 	return final_result;
 }
 
-void write_file(char** instruction, FILE* output, int instruction_counter,
+void write_file( FILE* output, int instruction_counter,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 { 
-	
+	printf("first of write \n");
+	printf("%d\n", instruction_counter);
 	unsigned long int final_result;
 	for (int i = 0; i < instruction_counter; i++)
 	{
 		printf("in the for\n");
 	
-		final_result = What_kind(instruction, instruction_counter, i, symbol_Table, symbol_Table_size);
+		final_result = What_kind(instruction_counter, i, symbol_Table, symbol_Table_size);
 		printf("%d\n", final_result);
 		//(final_result, output);
 		//fputs("\n", output);
 	}
 }
 
-void fill_instruction(char instruction[][200], int * instruction_counter)
+void fill_instruction( )
 {
 
 	char path[100] = "";
@@ -610,11 +612,11 @@ void fill_instruction(char instruction[][200], int * instruction_counter)
 
 	int count = 0;
 
-	while (fgets(instruction[(*instruction_counter)], 200, Input))
+	while (fgets(instruction[(instruction_counter)], 200, Input))
 	{
-		printf("%s", instruction[(*instruction_counter)]);
-		instruction[(*instruction_counter)][strlen(instruction[(*instruction_counter)]) - 1] = '\0';
-		(*instruction_counter)=(*instruction_counter)+1;
+		printf("%s", instruction[(instruction_counter)]);
+		instruction[(instruction_counter)][strlen(instruction[(instruction_counter)]) - 1] = '\0';
+		(instruction_counter)=(instruction_counter)+1;
 	}
 
 }
@@ -625,19 +627,19 @@ int main(int argc, char* argv[])
 	FILE* Output;
 
 
-	int instruction_counter = 0;
-	char* instruction[65537];
+	
+	
 
-	fill_instruction(instruction, &instruction_counter);
+	fill_instruction(&instruction_counter);
 
 
 	struct MAP_lable* symbol_Table = (struct MAP_lable*)malloc(instruction_counter * sizeof(struct MAP_lable));
 	int symbol_Table_Size = 0;
 
-	first_scan( symbol_Table, instruction, symbol_Table_Size,instruction_counter);
+	first_scan( symbol_Table, symbol_Table_Size,instruction_counter);
 
 
-	write_file(instruction, Output, instruction_counter, symbol_Table, symbol_Table_Size);
+	write_file( Output, instruction_counter, symbol_Table, symbol_Table_Size);
 
 	return 0;
 
