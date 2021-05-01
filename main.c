@@ -22,6 +22,12 @@ unsigned long int val_Register[16];
 // بعد بریزیمشون تو
 // symbol table
 // به همراه آدرسشون
+
+char* my_strcat(char* destination,  char* source)
+{
+	strcpy(destination + strlen(destination), source);
+	return destination;
+}
 struct MAP_lable
 {
 
@@ -31,6 +37,7 @@ struct MAP_lable
 };
 int search_on_Map_lable(struct MAP_lable* symbol_Table, int symbol_Table_size, char* lable)
 {
+	printf("search_on_Map_lable function\n ");
 	for (int i = 0; i < symbol_Table_size; i++)
 	{
 		if (symbol_Table[i].lable == lable)
@@ -46,6 +53,7 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table, int symbol_Table_size, c
 void first_scan(struct MAP_lable* symbol_Table,
 	int symbol_Table_Size)
 {
+	printf("first scan function\n ");
 	for (int i = 0; i < instruction_counter; i++)
 	{
 		if (instruction[i][0] != ' ')
@@ -83,22 +91,28 @@ void first_scan(struct MAP_lable* symbol_Table,
 //function to transfer binary to int
 void  Decimal_To_Binary(int n, int size, char *binary)
 {
-	char rest;
+	printf("DecimalTo binary function\n ");
+	printf("DecimalTo binary function %d\n ", n);
+	char  * rest[2];
+
 	int cnt = 0;
 	while (n > 0)
 	{
-		rest = n % 2;
-		strcat_s(binary, strlen(binary), rest);
+		rest[0] =  (n % 2 )- '0';
+		my_strcat(binary, rest);
 		n /= 2;
 		cnt++;
+		printf("bin %s/n",binary);
 	}
 	while (cnt < size)
 	{
-		strcat_s(binary, strlen(binary), "0");
+		my_strcat(binary, "0");
 		cnt++;
 	}
+	printf("biin %s/n", binary);
 	if (size == 16 && strlen(binary) > 16)
 	{
+		printf("exit /n");
 		exit(1);
 	}
 	//return strrev(binary);
@@ -108,13 +122,19 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 	{
 		reversed_bin[k] = binary[size - k - 1];
 	}
+	for (int k = 0; k < strlen(binary); k++)
+	{
+		binary[k] = reversed_bin[k];
+	}
 	
+	printf("biin %s/n", binary);
 
 
 }
 
 unsigned long int Binary_To_Decimal(char* number, int size)
 {
+	printf("BTOD function\n ");
 	unsigned long int n = 0, two = 0;
 	for (int i = size - 1; i >= 0; i--)
 	{
@@ -127,24 +147,27 @@ unsigned long int Binary_To_Decimal(char* number, int size)
 //فعلا برای R_Type
 void connector_R(char* op_code, char* rs, char* rt, char* rd, char * total)
 {
+	printf(" connector_R function\n ");
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total), '0');
+		my_strcat(total,  "0");
 	}
-	strcat_s(total, strlen(total), op_code);
-	strcat_s(total, strlen(total), rs);
-	strcat_s(total, strlen(total), rt);
-	strcat_s(total, strlen(total), rd);
+	my_strcat(total, op_code);
+	my_strcat(total,  rs);
+	my_strcat(total,  rt);
+	my_strcat(total,  rd);
 	for (i = 11; i >= 0; i--)
 	{
-		strcat_s(total, strlen(total), "0");
+		my_strcat(total,  "0");
 	}
 }
 unsigned long int seprator_R( int j, int i, char* op_code, char* instruct)
 {
+	printf(" sepra_R function\n ");
+	
 	int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
-	strcat_s(instruction[i], strlen(instruction[i]), " ");
+	my_strcat(instruction[i], " ");
 	while (instruction[i][j] !=' ' && instruction[i][j] != '#')
 	{
 		if (instruction[i][j] == ',')
@@ -205,6 +228,7 @@ unsigned long int seprator_R( int j, int i, char* op_code, char* instruct)
 
 unsigned long int R_Type(char* instruct,  int j, int i)
 {
+	printf(" R-type function\n ");
 	// instruction $rd, $rs, $rt
 	// in machin code : 0000 op-code rs rt rd
 	// j is a index of first space after instruct
@@ -238,15 +262,16 @@ unsigned long int R_Type(char* instruct,  int j, int i)
 //  I type
 void connector_I(char* op_code, char* rs, char* rt, char* imm, char* total)
 {
+	printf(" connector_I function\n ");
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total), "0");
+		my_strcat(total,  "0");
 	}
-	strcat_s(total, strlen(total), op_code);
-	strcat_s(total, strlen(total), rs);
-	strcat_s(total, strlen(total), rt);
-	strcat_s(total, strlen(total), imm);
+	my_strcat(total,  op_code);
+	my_strcat(total,  rs);
+	my_strcat(total,  rt);
+	my_strcat(total,  imm);
 
 
 	
@@ -255,11 +280,11 @@ void connector_I(char* op_code, char* rs, char* rt, char* imm, char* total)
 unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
-
+	printf("serator I function\n ");
 	int rs = 0, rt = 0, INT_imm = 0, tenth = 1, tdd = 0;
 
-	char imm[] = "";
-	strcat_s(instruction[i], strlen(instruction[i]), " ");
+	char* imm = (char*)calloc(100, 1);
+	my_strcat(instruction[i],  " ");
 	if (instruct == "lui")
 	{
 		while (instruction[i][j] != ' ' && instruction[i][j] != '#')
@@ -277,7 +302,9 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 			}
 			else
 			{
-				strcat_s(imm, strlen(imm), instruction[i][j]);
+				char* a[2];
+				a[0] = instruction[i][j];
+				my_strcat(imm, a);
 			}
 			tenth *= 10;
 			j++;
@@ -325,7 +352,9 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 			}
 			else
 			{
-				strcat_s(imm, strlen(imm), instruction[i][j]);
+				char* a[2];
+				a[0] = instruction[i][j];
+				my_strcat(imm,  a);
 			}
 			tenth *= 10;
 			j++;
@@ -358,10 +387,13 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 
 	}
 	char* total = "";
-	char* binary_rs = "";
+	char* binary_rs = (char*)calloc(100, 1);
+	// char* binary_rs = "";
 	char* binary_rt = "";
 	char* binary_imm = "";
+	
 	Decimal_To_Binary(rs, 4, binary_rs);
+	//printf("binary_rs %s \n", binary_rs);
 	Decimal_To_Binary(rt, 4, binary_rt);
 	Decimal_To_Binary(INT_imm, 4, binary_imm);
 	connector_I(op_code, binary_rs, binary_rt, binary_imm, total);
@@ -371,6 +403,8 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 unsigned long int I_Type(char* instruct, int j, int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
+	
+	printf("I type function\n ");
 	// instruction $rt, $rs, imm
 	// machin code : 0000 op_code rs, rt, offset
 	while (instruction[i][j] ==  ' ' )
@@ -418,22 +452,25 @@ void connector_J(char* op_code, char* offset, char* total)
 	int i, j = 0;
 	for (i = 31; i > 27; i--)
 	{
-		strcat_s(total, strlen(total), '0');
+		my_strcat(total,  "0");
 	}
-	strcat_s(total, strlen(total), op_code);
-	strcat_s(total, strlen(total), "00000000");
-	strcat_s(total, strlen(total), offset);
+	my_strcat(total,  op_code);
+	my_strcat(total,  "00000000");
+	my_strcat(total,  offset);
 	
 }
 
 unsigned long int seprator_J( int j, int i, struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf("j seprator\n");
-	char offset[] = "";
-	strcat_s(instruction[i], strlen(instruction[i]), " ");
+	char* offset = (char*)calloc(100, 1);
+	
+	my_strcat(instruction[i], " ");
 	while (instruction[i][j] != ' ' || instruction[i][j] != '#')
 	{
-		strcat_s(offset, strlen(offset), instruction[i][j]);
+		char* a[2];
+		a[0] = instruction[i][j];
+		my_strcat(offset,  a);
 		j++;
 	}
 	int index = 0, INT_offset = 0, tenth = 1;
@@ -485,13 +522,18 @@ unsigned long int J_Type( char* instruct, int i, int j,
 unsigned long int directive( int i, int j,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
+	printf(" directive function\n ");
 	while (instruction[i][j] == ' ')
 		j++;
-	char what_num[] = "";
-	strcat_s(instruction[i], strlen(instruction[i]), " ");
+	
+	char* what_num = (char*)calloc(100, 1);
+	
+	my_strcat(instruction[i],  " ");
 	while (instruction[i][j] != ' ')
 	{
-		strcat_s(what_num, strlen(what_num), instruction[i][j]);
+		char* a[2];
+		a[0] = instruction[i][j];
+		my_strcat(what_num,  a);
 		j++;
 	}
 	unsigned long int what_int = 0;
@@ -523,50 +565,58 @@ unsigned long int directive( int i, int j,
 unsigned long int What_kind( int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
-	printf("what kind\n");
+	printf(" What kind \n ");
+	
 	int j;
-	char instruct[20] = "";
+	char* instruct = (char*)calloc(100, 1);
+	
 	for (j = 0; instruction[i][j] != ' '; j++); // اگر لیبلی وجود داره، ردش میکنیم
 	while (instruction[i][j] == ' ')
 	{
 		//  تا رسیدن به اولین اینستراکشن، اسپیس ها رو هم رد میکنیم
 		j++;
 	}
+	
 	while (instruction[i][j] != ' ')
 	{
-		strcat_s(instruct, strlen(instruct), instruction[i][j]);
-
+		char* a[2];
+		a[0] = instruction[i][j];
+		
+		my_strcat(instruct,  a);
+		
 		j++;
 	}
+	
 	//  اینجا، اون قسمت اینستراکشن رو توی اینستراکت ریختیم
 	// is it true?! //what do you mean?
 	// J is now whatever after the instruction. $rd, $rs, %rt
 	// so we're gonna send j to the function to use it
+	printf("%s\n","instruct is");
 	printf("%s\n", instruct);
 
 	unsigned long int final_result;
 
-	if (strcmp(instruct, "add") || strcmp(instruct, "sub") ||
-		strcmp(instruct, "slt") || strcmp(instruct, "or") ||
-		strcmp(instruct, "nand"))
+	if (strcmp(instruct, "add")==0 || strcmp(instruct, "sub") == 0 ||
+		strcmp(instruct, "slt") == 0 || strcmp(instruct, "or") ==0 ||
+		strcmp(instruct, "nand") == 0)
 	{
 		final_result = R_Type(instruct, j, i);
 	}
 
-	else if (strcmp(instruct, "addi") || strcmp(instruct, "ori") ||
-		strcmp(instruct, "slti") || strcmp(instruct, "lui") ||
-		strcmp(instruct, "lw") || strcmp(instruct, "sw") ||
-		strcmp(instruct, "beq") || strcmp(instruct, "jalr"))
+	else if (strcmp(instruct, "addi")==0 || strcmp(instruct, "ori")==0 ||
+		strcmp(instruct, "slti")==0 || strcmp(instruct, "lui")==0 ||
+		strcmp(instruct, "lw")==0 || strcmp(instruct, "sw")==0 ||
+		strcmp(instruct, "beq")==0 || strcmp(instruct, "jalr")==0)
 	{
 		final_result = I_Type(instruct, j, i, symbol_Table, symbol_Table_size);
 	}
 
-	else if (strcmp(instruct, "j") || strcmp(instruct, "halt"))
+	else if (strcmp(instruct, "j")==0 || strcmp(instruct, "halt")==0)
 	{
 		final_result = J_Type( instruct, i, j, symbol_Table, symbol_Table_size);
 	}
 
-	else if (strcmp(instruct, ".fill") || strcmp(instruct, ".space"))
+	else if (strcmp(instruct, ".fill")==0 || strcmp(instruct, ".space")==0)
 	{
 		final_result = directive( i, j, symbol_Table, symbol_Table_size);
 	}
