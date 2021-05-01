@@ -91,7 +91,7 @@ void first_scan(struct MAP_lable* symbol_Table,
 //function to transfer binary to int
 void  Decimal_To_Binary(int n, int size, char *binary)
 {
-	printf("DecimalTo binary function\n ");
+
 	printf("DecimalTo binary function %d\n ", n);
 	char  * rest[2];
 
@@ -99,25 +99,26 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 	while (n > 0)
 	{
 		rest[0] =  (n % 2 )- '0';
+
 		my_strcat(binary, rest);
 		n /= 2;
 		cnt++;
-		printf("bin %s/n",binary);
+		
 	}
 	while (cnt < size)
 	{
 		my_strcat(binary, "0");
 		cnt++;
 	}
-	printf("biin %s/n", binary);
+	
 	if (size == 16 && strlen(binary) > 16)
 	{
-		printf("exit /n");
+		printf("exit \n");
 		exit(1);
 	}
 	//return strrev(binary);
 	char* reversed_bin = malloc(strlen(binary) * sizeof(char));
-
+	printf("biin %s\n", binary);
 	for (int k = 0; k < strlen(binary); k++)
 	{
 		reversed_bin[k] = binary[size - k - 1];
@@ -127,7 +128,7 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 		binary[k] = reversed_bin[k];
 	}
 	
-	printf("biin %s/n", binary);
+	printf("biin %s\n", binary);
 
 
 }
@@ -215,10 +216,10 @@ unsigned long int seprator_R( int j, int i, char* op_code, char* instruct)
 	{
 		val_Register[rd] = ~(val_Register[rs] | val_Register[rt]);
 	}
-	char* total = "";
-	char* binary_rs = "";
-	char* binary_rt = "";
-	char* binary_rd = "";
+	char* total = (char*)calloc(32, 1);
+	char* binary_rs = (char*)calloc(4, 1);
+	char* binary_rt = (char*)calloc(4, 1);
+	char* binary_rd = (char*)calloc(4, 1);
 	Decimal_To_Binary(rs, 4, binary_rs);
 	Decimal_To_Binary(rt, 4, binary_rt);
 	Decimal_To_Binary(rd, 4, binary_rd);
@@ -386,16 +387,16 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 
 
 	}
-	char* total = "";
-	char* binary_rs = (char*)calloc(100, 1);
+	char* total = (char*)calloc(32, 1);
+	char* binary_rs = (char*)calloc(4, 1);
 	// char* binary_rs = "";
-	char* binary_rt = "";
-	char* binary_imm = "";
+	char* binary_rt = (char*)calloc(4, 1);
+	char* binary_imm = (char*)calloc(16, 1);
 	
 	Decimal_To_Binary(rs, 4, binary_rs);
 	//printf("binary_rs %s \n", binary_rs);
 	Decimal_To_Binary(rt, 4, binary_rt);
-	Decimal_To_Binary(INT_imm, 4, binary_imm);
+	Decimal_To_Binary(INT_imm, 16, binary_imm);
 	connector_I(op_code, binary_rs, binary_rt, binary_imm, total);
 	return Binary_To_Decimal(total, 32);
 }
@@ -492,8 +493,9 @@ unsigned long int seprator_J( int j, int i, struct MAP_lable* symbol_Table, int 
 			exit(1);
 		}
 	}
-	char* total = "";
-	char* Offset="";
+	char* total = (char*)calloc(100, 1);
+	
+	char* Offset= (char*)calloc(100, 1);
 	Decimal_To_Binary(INT_offset, 16, Offset);
 
 	connector_J("1101",Offset, total);
