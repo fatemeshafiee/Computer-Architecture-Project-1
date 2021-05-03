@@ -50,8 +50,7 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table, int symbol_Table_size, c
 }
 
 //طبق داک، این کار رو تو اسکن اول داریم انجام میدیم
-void first_scan(struct MAP_lable* symbol_Table,
-	int symbol_Table_Size)
+void first_scan(struct MAP_lable* symbol_Table, int symbol_Table_Size)
 {
 	printf("first scan function\n ");
 	for (int i = 0; i < instruction_counter; i++)
@@ -81,8 +80,6 @@ void first_scan(struct MAP_lable* symbol_Table,
 
 				}
 			}
-
-
 		}
 	}
 	return;
@@ -92,18 +89,22 @@ void first_scan(struct MAP_lable* symbol_Table,
 void  Decimal_To_Binary(int n, int size, char *binary)
 {
 
-	printf("DecimalTo binary function %d\n ", n);
-	char  * rest[2];
-
+	//printf("DecimalTo binary function %d\n ", n);
+	char rest; 
+	//printf("the binary sent to function : %s\n", binary);
 	int cnt = 0;
 	while (n > 0)
 	{
-		rest[0] =  (n % 2 )- '0';
-
-		my_strcat(binary, rest);
+		rest = (char)(n % 2);
+		rest += '0';
+		char* sent[1];
+		sent[0] = rest;
+		//printf("this is rest in while : %c\n", rest);
+		//strcpy(binary + strlen(binary), &rest);
+		my_strcat(binary, sent);
+		//printf("this is strcat binary with rest : $s\n", binary);
 		n /= 2;
 		cnt++;
-		
 	}
 	while (cnt < size)
 	{
@@ -118,7 +119,7 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 	}
 	//return strrev(binary);
 	char* reversed_bin = malloc(strlen(binary) * sizeof(char));
-	printf("biin %s\n", binary);
+	//printf("biin %s\n", binary);
 	for (int k = 0; k < strlen(binary); k++)
 	{
 		reversed_bin[k] = binary[size - k - 1];
@@ -128,9 +129,7 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 		binary[k] = reversed_bin[k];
 	}
 	
-	printf("biin %s\n", binary);
-
-
+	//printf("biin %s\n", binary);
 }
 
 unsigned long int Binary_To_Decimal(char* number, int size)
@@ -360,6 +359,7 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 			tenth *= 10;
 			j++;
 		}
+		//printf("rt : %d, rs :  %d, imm : %s \n", rt, rs, imm);
 		if (strlen(imm) != 0)
 		{
 			if (imm[0] >= '0' && imm[0] <= '9')
@@ -384,8 +384,6 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 			}
 
 		}
-
-
 	}
 	char* total = (char*)calloc(32, 1);
 	char* binary_rs = (char*)calloc(4, 1);
@@ -568,10 +566,9 @@ unsigned long int What_kind( int i,
 	struct MAP_lable* symbol_Table, int symbol_Table_size)
 {
 	printf(" What kind \n ");
-	
+	//printf("instruction being used : %s \n", instruction[i]);
 	int j;
 	char* instruct = (char*)calloc(100, 1);
-	
 	for (j = 0; instruction[i][j] != ' '; j++); // اگر لیبلی وجود داره، ردش میکنیم
 	while (instruction[i][j] == ' ')
 	{
@@ -583,12 +580,9 @@ unsigned long int What_kind( int i,
 	{
 		char* a[2];
 		a[0] = instruction[i][j];
-		
 		my_strcat(instruct,  a);
-		
 		j++;
 	}
-	
 	//  اینجا، اون قسمت اینستراکشن رو توی اینستراکت ریختیم
 	// is it true?! //what do you mean?
 	// J is now whatever after the instruction. $rd, $rs, %rt
@@ -648,7 +642,6 @@ void write_file( FILE* output,
 
 void fill_instruction( )
 {
-
 	char path[100] = "";
 	printf("\nenter address of your file: ");
 	gets(path);
@@ -660,14 +653,11 @@ void fill_instruction( )
 		exit(1);
 	}
 
-
 	int j = 0;
-
 	int count = 0;
 
 	while (fgets(instruction[(instruction_counter)], 200, Input))
 	{
-		
 		printf("%s", instruction[(instruction_counter)]);
 		instruction[(instruction_counter)][strlen(instruction[(instruction_counter)]) - 1] = '\0';
 		(instruction_counter)=(instruction_counter)+1;
