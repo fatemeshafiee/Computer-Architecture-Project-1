@@ -89,9 +89,10 @@ void first_scan(struct MAP_lable* symbol_Table, int symbol_Table_Size)
 void  Decimal_To_Binary(int n, int size, char *binary)
 {
 
-	//printf("DecimalTo binary function %d\n ", n);
+	printf("DecimalTo binary function %d\n ", n);
 	char rest; 
-	//printf("the binary sent to function : %s\n", binary);
+	printf("the binary sent to function : %s\n", binary);
+	printf("%d\n", strlen(binary));
 	int cnt = 0;
 	while (n > 0)
 	{
@@ -99,37 +100,41 @@ void  Decimal_To_Binary(int n, int size, char *binary)
 		rest += '0';
 		char* sent[1];
 		sent[0] = rest;
-		//printf("this is rest in while : %c\n", rest);
+		printf("this is rest in while : %c\n", rest);
 		//strcpy(binary + strlen(binary), &rest);
 		my_strcat(binary, sent);
 		//printf("this is strcat binary with rest : $s\n", binary);
 		n /= 2;
 		cnt++;
 	}
+	//printf("this is cnt : %d\n and this is binary after while : %s\n", cnt, binary);
 	while (cnt < size)
 	{
 		my_strcat(binary, "0");
 		cnt++;
 	}
-	
 	if (size == 16 && strlen(binary) > 16)
 	{
 		printf("exit \n");
 		exit(1);
 	}
+	printf("biin222222222 %s\n", binary);
+	printf("%d\n", strlen(binary));
 	//return strrev(binary);
-	char* reversed_bin = malloc(strlen(binary) * sizeof(char));
-	//printf("biin %s\n", binary);
+	char* reversed_bin = (char*)calloc(strlen(binary) , 1);
+	printf("%d\n", strlen(binary));
+	printf("biin333333333 %s\n", binary);
 	for (int k = 0; k < strlen(binary); k++)
 	{
 		reversed_bin[k] = binary[size - k - 1];
+		printf("this is in for : %s\n", reversed_bin);
 	}
 	for (int k = 0; k < strlen(binary); k++)
 	{
 		binary[k] = reversed_bin[k];
 	}
 	
-	//printf("biin %s\n", binary);
+	printf("biin %s\n", binary);
 }
 
 unsigned long int Binary_To_Decimal(char* number, int size)
@@ -236,23 +241,23 @@ unsigned long int R_Type(char* instruct,  int j, int i)
 		j++;
 
 	unsigned long int final_result;
-	if (strcmp(instruct, "add"))
+	if (!strcmp(instruct, "add"))
 	{
 		final_result = seprator_R( j, i, "0000", instruct);
 	}
-	else if (strcmp(instruct, "sub"))
+	else if (!strcmp(instruct, "sub"))
 	{
 		final_result = seprator_R( j, i, "0001", instruct);
 	}
-	else if (strcmp(instruct, "slt"))
+	else if (!strcmp(instruct, "slt"))
 	{
 		final_result = seprator_R( j, i, "0010", instruct);
 	}
-	else if (strcmp(instruct, "or"))
+	else if (!strcmp(instruct, "or"))
 	{
 		final_result = seprator_R( j, i, "0011", instruct);
 	}
-	else if (strcmp(instruct, "nand"))
+	else if (!strcmp(instruct, "nand"))
 	{
 		final_result = seprator_R( j, i, "0100", instruct);
 	}
@@ -264,17 +269,18 @@ void connector_I(char* op_code, char* rs, char* rt, char* imm, char* total)
 {
 	printf(" connector_I function\n ");
 	int i, j = 0;
+	printf("this is totla : %s\n", total);
 	for (i = 31; i > 27; i--)
 	{
 		my_strcat(total,  "0");
 	}
+	printf("total after for : $s\n", total);
+	printf("this is opcode is connector : %s\n", op_code);
 	my_strcat(total,  op_code);
 	my_strcat(total,  rs);
 	my_strcat(total,  rt);
 	my_strcat(total,  imm);
-
-
-	
+	printf("final total : %s\n", total);
 }
 
 unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
@@ -382,7 +388,6 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 					exit(1);
 				}
 			}
-
 		}
 	}
 	char* total = (char*)calloc(32, 1);
@@ -394,7 +399,10 @@ unsigned long int seprator_I( int j, int i, char* op_code, char* instruct,
 	Decimal_To_Binary(rs, 4, binary_rs);
 	//printf("binary_rs %s \n", binary_rs);
 	Decimal_To_Binary(rt, 4, binary_rt);
+	printf("this is rt : %s\n", binary_rt);
 	Decimal_To_Binary(INT_imm, 16, binary_imm);
+	printf("this is imm : %s\n", binary_imm);
+	printf("this is op-code : %s\n", op_code);
 	connector_I(op_code, binary_rs, binary_rt, binary_imm, total);
 	return Binary_To_Decimal(total, 32);
 }
@@ -409,35 +417,35 @@ unsigned long int I_Type(char* instruct, int j, int i,
 	while (instruction[i][j] ==  ' ' )
 		j++;
 	unsigned long int final_result;
-	if (strcmp(instruct, "addi"))
+	if (!strcmp(instruct, "addi"))
 	{
 		final_result = seprator_I( j, i, "0101", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "slti"))
+	else if (!strcmp(instruct, "slti"))
 	{
 		final_result = seprator_I( j, i, "0110", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "ori"))
+	else if (!strcmp(instruct, "ori"))
 	{
 		final_result = seprator_I( j, i, "0111", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "lui"))
+	else if (!strcmp(instruct, "lui"))
 	{
 		final_result = seprator_I( j, i, "1000", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "lw"))
+	else if (!strcmp(instruct, "lw"))
 	{
 		final_result = seprator_I(j, i, "1001", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "sw"))
+	else if (!strcmp(instruct, "sw"))
 	{
 		final_result = seprator_I( j, i, "1010", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "beq"))
+	else if (!strcmp(instruct, "beq"))
 	{
 		final_result = seprator_I( j, i, "1011", instruct, symbol_Table, symbol_Table_size);
 	}
-	else if (strcmp(instruct, "jalr"))
+	else if (!strcmp(instruct, "jalr"))
 	{
 		final_result = seprator_I( j, i, "1100", instruct, symbol_Table, symbol_Table_size);
 	}
