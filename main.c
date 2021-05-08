@@ -43,7 +43,7 @@ int search_on_Map_lable(struct MAP_lable* symbol_Table, int* symbol_Table_size, 
         return -1;
     for (int i = 0; i < *symbol_Table_size; i++)
     {
-        if (symbol_Table[i].lable == lable)
+        if (strcmp(symbol_Table[i].lable, lable) == 0)
         {
             return symbol_Table[i].address;
         }
@@ -567,12 +567,13 @@ unsigned long int directive(int i, int j,
         j++;
     }
     unsigned long int what_int = 0;
-    if ((what_num[i] >= '0' && what_num[i] <= '9') || what_num == '-')
+    int k = 0;
+    if ((what_num[0] >= '0' && what_num[0] <= '9') || what_num[0] == '-')
     {
         int tenth = 1, i = 0;
         if (what_num[0] == '-')
-            i = 1;
-        for (; i < strlen(what_num); i++)
+            k = 1;
+        for (; k < strlen(what_num); k++)
         {
             what_int = what_int * tenth;
             what_int += (what_num[i] - '0');
@@ -664,7 +665,9 @@ void write_file(FILE* output,
         printf("in the for\n%d\n", i);
 
         final_result = What_kind(i, symbol_Table, symbol_Table_size);
-        printf("%lu\n", final_result);
+        printf("for the instruction i %d\n", i);
+        printf("final result is   %lu\n", final_result);
+        printf("------------------------------------------------\n");
         //(final_result, output);
         //fputs("\n", output);
     }
