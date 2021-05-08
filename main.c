@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-//C:/Users/KPS/Documents/CApro/test_I.txt
+//C:/Users/KPS/Documents/CApro/test_I.as
 
 #define MAX_LINE_LENGTH 100
 char instruction[65537][200];
@@ -125,7 +125,7 @@ void  Decimal_To_Binary(int n, int size, char* binary)
     printf("binary after size scale %s\n", binary);
     printf(" binary size %d\n", strlen(binary));
     //return strrev(binary);
-    char* reversed_bin = (char*)calloc(strlen(binary), 1);
+    char* reversed_bin = (char*)calloc(strlen(binary) + 1, 1);
     printf(" reversed_bin size %d\n", strlen(reversed_bin));
     printf("biin333333333 %s\n", binary);
     for (int k = 0; k < strlen(binary); k++)
