@@ -8,4 +8,3 @@
 	.space 20
 com	slt 1,2,3
 	.fill com
-	

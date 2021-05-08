@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-//C:/Users/KPS/Documents/CApro/test_I.as
+//C:/Users/KPS/Documents/CApro/test_R.as
 
 #define MAX_LINE_LENGTH 100
 char instruction[65537][200];
@@ -58,10 +58,10 @@ void first_scan(struct MAP_lable* symbol_Table, int* symbol_Table_Size)
     printf("first scan function\n ");
     for (int i = 0; i < instruction_counter; i++)
     {
-        if (instruction[i][0] != ' ')
+        if (instruction[i][0] != ' ' && instruction[i][0] != '\t')
         {
             unsigned int j;
-            for (j = 0; instruction[i][j] != ' '; j++);
+            for (j = 0; instruction[i][j] != ' ' && instruction[i][j] != '\t'; j++);
             //char newlable[10] = { 0 };
             char* newlable = (char*)calloc(j + 1, 1);
             for (unsigned int k = 0; k < j; k++)
@@ -181,7 +181,7 @@ unsigned long int seprator_R(int j, int i, char* op_code, char* instruct)
 
     int rd = 0, rs = 0, rt = 0, tenth = 1, tdd = 0;
     my_strcat(instruction[i], " ");
-    while (instruction[i][j] != ' ' && instruction[i][j] != '#')
+    while (instruction[i][j] != ' ' && instruction[i][j] != '#' && instruction[i][j] != '\t')
     {
         if (instruction[i][j] == ',')
         {
@@ -245,7 +245,7 @@ unsigned long int R_Type(char* instruct, int j, int i)
     // instruction $rd, $rs, $rt
     // in machin code : 0000 op-code rs rt rd
     // j is a index of first space after instruct
-    while (instruction[i][j] == ' ')
+    while (instruction[i][j] == ' ' || instruction[i][j] == '\t')
         j++;
 
     unsigned long int final_result;
@@ -301,7 +301,7 @@ unsigned long int seprator_I(int j, int i, char* op_code, char* instruct,
     my_strcat(instruction[i], " ");
     if (instruct == "lui")
     {
-        while (instruction[i][j] != ' ' && instruction[i][j] != '#')
+        while (instruction[i][j] != ' ' && instruction[i][j] != '#' && instruction[i][j] != '\t')
         {
 
             if (instruction[i][j] == ',')
@@ -346,7 +346,7 @@ unsigned long int seprator_I(int j, int i, char* op_code, char* instruct,
     }
     else
     {
-        while (instruction[i][j] != ' ' && instruction[i][j] != '#')
+        while (instruction[i][j] != ' ' && instruction[i][j] != '#' && instruction[i][j] != '\t')
         {
 
             if (instruction[i][j] == ',')
@@ -436,7 +436,7 @@ unsigned long int I_Type(char* instruct, int j, int i,
     printf("I type function\n ");
     // instruction $rt, $rs, imm
     // machin code : 0000 op_code rs, rt, offset
-    while (instruction[i][j] == ' ')
+    while (instruction[i][j] == ' ' || instruction[i][j] == '\t')
         j++;
     unsigned long int final_result;
     if (!strcmp(instruct, "addi"))
@@ -495,7 +495,7 @@ unsigned long int seprator_J(int j, int i, struct MAP_lable* symbol_Table, int* 
     char* offset = (char*)calloc(100, 1);
 
     my_strcat(instruction[i], " ");
-    while (instruction[i][j] != ' ' || instruction[i][j] != '#')
+    while (instruction[i][j] != ' ' && instruction[i][j] != '#' && instruction[i][j] != '\t')
     {
         char* a[2];
         a[0] = instruction[i][j];
@@ -541,7 +541,7 @@ unsigned long int J_Type(char* instruct, int i, int j,
     }
     else
     {
-        while (instruction[i][j] == ' ')
+        while (instruction[i][j] == ' ' || instruction[i][j] == '\t')
             j++;
         unsigned long int final_result;
         final_result = seprator_J(j, i, symbol_Table, symbol_Table_size);
@@ -553,18 +553,19 @@ unsigned long int directive(int i, int j,
     struct MAP_lable* symbol_Table, int* symbol_Table_size)
 {
     printf(" directive function\n ");
-    while (instruction[i][j] == ' ')
+    while (instruction[i][j] == ' ' || instruction[i][j] == '\t')
         j++;
 
     char* what_num = (char*)calloc(100, 1);
 
     my_strcat(instruction[i], " ");
-    while (instruction[i][j] != ' ')
+    while (instruction[i][j] != ' ' && instruction[i][j] != '\t')
     {
-        char* a[2];
+        char* a = (char*)calloc(2, 1);
         a[0] = instruction[i][j];
         my_strcat(what_num, a);
         j++;
+        free(a);
     }
     unsigned long int what_int = 0;
     int k = 0;
@@ -600,14 +601,14 @@ unsigned long int What_kind(int i,
     //printf("instruction being used : %s \n", instruction[i]);
     int j;
     char* instruct = (char*)calloc(100, 1);
-    for (j = 0; instruction[i][j] != ' '; j++); // اگر لیبلی وجود داره، ردش میکنیم
-    while (instruction[i][j] == ' ')
+    for (j = 0; instruction[i][j] != ' ' && instruction[i][j] != '\t'; j++); // اگر لیبلی وجود داره، ردش میکنیم
+    while (instruction[i][j] == ' ' || instruction[i][j] == '\t')
     {
         //  تا رسیدن به اولین اینستراکشن، اسپیس ها رو هم رد میکنیم
         j++;
     }
 
-    while (instruction[i][j] != ' ')
+    while (instruction[i][j] != ' ' && instruction[i][j] != '\t')
     {
         char* a[2];
         a[0] = instruction[i][j];
