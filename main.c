@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-//C:/Users/KPS/Documents/CApro/test_R.as
+//C:/Users/KPS/Documents/CApro/error4.as
 
 #define MAX_LINE_LENGTH 100
 char instruction[65537][200];
@@ -512,6 +512,17 @@ unsigned long int seprator_J(int j, int i, struct MAP_lable* symbol_Table, int* 
             INT_offset += (offset[k] - '0');
             tenth *= 10;
         }
+    }
+    else if (offset[index] == '-')
+    {
+        for (int k = 1; k < strlen(offset); k++)
+        {
+            INT_offset = INT_offset * tenth;
+
+            INT_offset += (offset[k] - '0');
+            tenth *= 10;
+        }
+        INT_offset *= -1;
     }
     else
     {
