@@ -535,7 +535,7 @@ unsigned long int J_Type(char* instruct, int i, int j,
 {
     printf("j type\n");
     //هالت هیچی نداره، جی هم یکی  داره.
-    if (instruct == "halt")
+    if (strcmp(instruct, "halt") == 0)
     {
         return 234881024;
     }
@@ -664,7 +664,7 @@ void write_file(FILE* output,
     for (int i = 0; i < instruction_counter; i++)
     {
         printf("in the for\n%d\n", i);
-
+        my_strcat(instruction[i], " ");
         final_result = What_kind(i, symbol_Table, symbol_Table_size);
         printf("for the instruction i %d\n", i);
         printf("final result is   %lu\n", final_result);

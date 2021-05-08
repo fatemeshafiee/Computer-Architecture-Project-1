@@ -7,4 +7,4 @@ lbl	or 1,0,3
 sec	add 3,2,3
 	j lbl
 	halt
-	j sec
+	j sec 
